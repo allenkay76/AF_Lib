@@ -7,6 +7,7 @@ int main(void);
 int main(void) {
     printf("ENTRY POINT: AF_Lib\n");
 
+    // Create the window
     AF_Lib_CreateWindow();
     return 0;
 }
