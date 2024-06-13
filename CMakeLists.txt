@@ -1,14 +1,42 @@
 cmake_minimum_required(VERSION 3.10)
 project(AF_Lib)
 
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD)
+# Set the C standard
+set(CMAKE_C_STANDARD 99)
 
-# Add source files
-file(GLOB_RECURSE SOURCE_FILES 
-src/*.c
-src/**/*.c
+
+
+# Add common source files
+file(GLOB_RECURSE COMMON_SOURCE_FILES 
+    src/common/*.c
 )
+
+# Add main.c file
+set(MAIN_SOURCE src/main.c)
+
+
+
+# Platform-specific source files
+if (APPLE)
+    message(STATUS "Configuring for macOS")
+    enable_language(OBJC)
+    set(CMAKE_OBJC_COMPILER "/usr/bin/clang")
+    file(GLOB_RECURSE PLATFORM_SOURCE_FILES src/osx/*.c src/osx/*.m)
+
+    # Specific files to be treated as Objective-C
+    set_source_files_properties(${PLATFORM_SOURCE_FILES} PROPERTIES LANGUAGE OBJC)
+    
+elseif (WIN32)
+    message(STATUS "Configuring for windows")
+    file(GLOB_RECURSE PLATFORM_SOURCE_FILES src/windows/*.c)
+else()
+    message(STATUS "Configuring for linux")
+    file(GLOB_RECURSE PLATFORM_SOURCE_FILES src/linux/*.c)
+endif()
+
+# Combine all source files
+set(SOURCE_FILES ${COMMON_SOURCE_FILES} ${PLATFORM_SOURCE_FILES} ${MAIN_SOURCE})
+
 
 # Explicitly list ImGui source files
 list(APPEND SOURCE_FILES
@@ -40,7 +68,7 @@ elseif(APPLE)
     link_directories(
         # Add other library directories as needed
         /usr/local/lib
-        ${CMAKE_SOURCE_DIR}/../../SDK/vulkan/macOS/lib
+        #${CMAKE_SOURCE_DIR}/../../SDK/vulkan/macOS/lib
     )
 endif()
 
@@ -64,6 +92,9 @@ elseif(APPLE)
     #find_package(glfw3 3.3 REQUIRED)
     target_link_libraries(AF_Lib
     PRIVATE
+        #"-framework Cocoa"
+        "-framework Foundation"
+        "-framework Cocoa"
         #"-framework OpenGL"
         #SDL2main
         #SDL2
@@ -96,6 +127,7 @@ endif()
 target_compile_options(AF_Lib PRIVATE
     #-mwindows
     #-time
+    
     -Wall
     -Wextra
     -Werror
@@ -104,10 +136,11 @@ target_compile_options(AF_Lib PRIVATE
     -Wnull-dereference
     -Wshadow
     -fstack-protector-strong
-    #-D_FORTIFY_SOURCE=2
-    #-fsanitize=address
     -fno-omit-frame-pointer
     -g
+    
+    #-D_FORTIFY_SOURCE=2
+    #-fsanitize=address
     #-O3
     #-v
     #-shared
@@ -126,8 +159,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     PREFIX ""
 )
 
-# Copy the DLL to the "bin" directory after building
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ${CMAKE_SOURCE_DIR}/bin
-)
 
+# Copy the DLL to the "bin" directory after building
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ${CMAKE_SOURCE_DIR}/bin
+#)
+
+#
