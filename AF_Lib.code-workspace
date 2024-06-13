@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"stdio.h": "c",
+			"af_window_cocoa.h": "c",
+			"af_window.h": "c"
+		}
+	}
+}
