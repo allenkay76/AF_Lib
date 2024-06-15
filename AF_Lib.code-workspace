@@ -8,7 +8,8 @@
 		"files.associations": {
 			"stdio.h": "c",
 			"af_window_cocoa.h": "c",
-			"af_window.h": "c"
+			"af_window.h": "c",
+			"af_renderer.h": "c"
 		}
 	}
 }
