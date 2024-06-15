@@ -39,6 +39,7 @@
 
 // Called when the last window is closed; return YES to terminate the application
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
+    NSLog(@"Shutdown OSX Window\n");
     return YES;
 }
 
