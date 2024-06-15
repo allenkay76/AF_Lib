@@ -21,7 +21,8 @@ if (APPLE)
     message(STATUS "Configuring for macOS")
     enable_language(OBJC)
     set(CMAKE_OBJC_COMPILER "/usr/bin/clang")
-    file(GLOB_RECURSE PLATFORM_SOURCE_FILES src/osx/*.c src/osx/*.m)
+    #file(GLOB_RECURSE PLATFORM_SOURCE_FILES src/osx/*.c src/osx/*.m)
+    file(GLOB_RECURSE PLATFORM_SOURCE_FILES src/osx/*.m)
 
     # Specific files to be treated as Objective-C
     set_source_files_properties(${PLATFORM_SOURCE_FILES} PROPERTIES LANGUAGE OBJC)
@@ -54,7 +55,9 @@ if(WIN32)
 elseif(APPLE)
     include_directories(
         ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/../../SDK/glfw/include
         /usr/local/include
+        
     )
 endif()
 
@@ -67,6 +70,7 @@ if(WIN32)
 elseif(APPLE)
     link_directories(
         # Add other library directories as needed
+        ${CMAKE_SOURCE_DIR}/../../SDK/glfw/lib-x86_64
         /usr/local/lib
         #${CMAKE_SOURCE_DIR}/../../SDK/vulkan/macOS/lib
     )
@@ -110,10 +114,10 @@ elseif(APPLE)
         #libvulkan.1.3.275.dylib
         #libvulkan.1.dylib
         
-        #glfw
+        glfw
         # Add other libraries as needed
     )
-    #find_package(glfw3 3.3 REQUIRED)
+    find_package(glfw3 3.3 REQUIRED)
 endif()
 
 # Set environment variables
