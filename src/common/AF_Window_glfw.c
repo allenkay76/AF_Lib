@@ -2,6 +2,7 @@
 #include <stdio.h>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include "AF_Input.h"
 //#include <glad/gl.h>
 // ------- Create Platform Independent Window -------
 
@@ -13,17 +14,22 @@ void error_callback(int error, const char* description)
     fprintf(stderr, "Error: %s %i\n", description, error);
 }
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+static void key_callback(GLFWwindow* _window, int key, int scancode, int action, int mods)
 {
     if(scancode){}
     if(mods){}
+
+    // Retrieve the pointer to the AF_Input struct from the window user pointer
+    AF_Input* state = (AF_Input*)glfwGetWindowUserPointer(_window);
+    state->lastKeyCodePressed = key;
+
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+        glfwSetWindowShouldClose(_window, GLFW_TRUE);
     }
 }
 
 // Implementation 
-void AFLib_CreateWindow(AF_Window* _window) {
+void AFLib_CreateWindow(AF_Window* _window, AF_Input* _input) {
     if(!_window){
         printf("AFLib_CreateWindow: failed to create window, argment passed in a null window\n");
         return;
@@ -57,10 +63,12 @@ void AFLib_CreateWindow(AF_Window* _window) {
     // make current context
     glfwMakeContextCurrent(glfwWindow);
 
+    // Set the struct pointer as the user pointer of the window for input callback
+    glfwSetWindowUserPointer(glfwWindow, _input);
+
+
     // Set callback
     glfwSetKeyCallback(glfwWindow, key_callback);
-
-    
 }
 
 bool AFLib_UpdateWindow(AF_Window* _window){
