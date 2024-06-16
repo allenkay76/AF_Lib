@@ -55,6 +55,7 @@ if(WIN32)
 elseif(APPLE)
     include_directories(
         ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/../AF_Math/include
         ${CMAKE_SOURCE_DIR}/../../SDK/glfw/include
         /usr/local/include
         
