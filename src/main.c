@@ -3,6 +3,7 @@
 #include "AF_Window.h"
 #include "AF_Input.h"
 #include "AF_Renderer.h"
+#include "AF_Log.h"
 
 // Forward declare of c function
 int main(void);
@@ -12,7 +13,7 @@ const uint16_t windowWidth = 1280;
 const uint16_t windowHeight = 720;
 
 int main(void) {
-    printf("ENTRY POINT: AF_Lib\n");
+    AFLibLog("MAIN: ENTRY POINT\n");
 
     
     // Input
@@ -34,7 +35,9 @@ int main(void) {
 
         // Check for escape key pressed
         if(gameInput.lastKeyCodePressed == 256){
-            printf("ESC pressed \n");
+            AFLog("GAME: ESC pressed \n");
+            AFLogWarning("warning\n");
+            AFLogError("error test\n");
             break;
         }
     }

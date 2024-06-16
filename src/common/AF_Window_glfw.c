@@ -3,15 +3,16 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include "AF_Input.h"
+#include "AF_Log.h"
 //#include <glad/gl.h>
 // ------- Create Platform Independent Window -------
-
+const char* glfwWindowFileTitle = "AF_Window_GLFW:";
 
 
 // forward declare
 void error_callback(int error, const char* description)
 {
-    fprintf(stderr, "Error: %s %i\n", description, error);
+    AFLogError("%s %s %i\n", glfwWindowFileTitle, description, error);
 }
 
 static void key_callback(GLFWwindow* _window, int key, int scancode, int action, int mods)
@@ -31,21 +32,21 @@ static void key_callback(GLFWwindow* _window, int key, int scancode, int action,
 // Implementation 
 void AFLib_CreateWindow(AF_Window* _window) {
     if(!_window){
-        printf("AFLib_CreateWindow: failed to create window, argment passed in a null window\n");
+        AFLogError("%s CreateWindow: failed to create window\n", glfwWindowFileTitle);
         return;
     }
 
-    printf("Create glfw window\n");
+    AFLibLog("%s Create Window\n", glfwWindowFileTitle);
     glfwSetErrorCallback(error_callback);
 
     if (!glfwInit())
     {
         // Initialization failed
-        printf("Failed to init glfw in Create AF_Window glfw\n");
+        AFLogError("%sCreateWindow: Failed to init glfw\n", glfwWindowFileTitle);
     }
 
     
-
+    // If using openGL 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -55,7 +56,7 @@ void AFLib_CreateWindow(AF_Window* _window) {
     if (!glfwWindow)
     {
         // Window or context creation failed
-         printf("Failed to create a window in Create glfw window glfw\n");
+         AFLogError("%s CreateWindow: Failed to create a window\n", glfwWindowFileTitle);
     }
     // assign the glfw window ptr to the struct passed in
      _window->window = glfwWindow;
@@ -95,17 +96,17 @@ bool AFLib_UpdateWindow(AF_Window* _window){
 void AFLib_TerminateWindow(AF_Window* _window){
     // null check the struct
     if(!_window){
-        printf("AFLib_CreateWindow: failed to destroy window, argment passed in a null AF_Window struct\n");
+        AFLogError("%s TerminateWindow: failed to destroy window, argment passed in a null AF_Window struct\n", glfwWindowFileTitle);
         return;
     }
 
     // Null check the window pointer
     if(!_window->window){
-        printf("AFLib_CreateWindow: failed to create window, argment passed in a null window ptr\n");
+        AFLogError("%s TerminateWindow: failed to create window, argment passed in a null window ptr\n", glfwWindowFileTitle);
         return;
     }
 
-    printf("Terminate GLFW Window\n");
+    AFLibLog("%s TerminateWindow:\n", glfwWindowFileTitle);
      // Destory the wndow
     glfwDestroyWindow(_window->window);
     glfwTerminate();

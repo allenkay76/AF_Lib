@@ -1,9 +1,11 @@
 #include "AF_Renderer.h"
 #include <stdio.h>
+#include "AF_Log.h"
 
+const char* openglRendererFileTitle = "AF_OpenGL_Renderer:";
 // Implementations
 void AFLIB_InitRenderer(void){
-    printf("OpenGL Renderer Initialized\n");
+    AFLibLog("%s Initialized\n", openglRendererFileTitle);
 
 }
 
@@ -13,5 +15,5 @@ void AFLIB_DisplayRenderer(void){
 }
 
 void AFLIB_DestroyRenderer(void){
-    printf("OpenGL Renderer Destroyed\n");
+    AFLibLog("%s Destroyed\n", openglRendererFileTitle);
 }
