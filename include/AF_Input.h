@@ -1,8 +1,11 @@
 #ifndef AF_INPUT_H
 #define AF_INPUT_H
 
-typedef struct {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+typedef struct {
     // input buffer que
     int lastKeyCodePressed;
 
@@ -13,7 +16,8 @@ typedef struct {
 
 } AF_Input;
 
-// poll the platform input and fill the input buffer with registered commands
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // AF_INPUT_H
