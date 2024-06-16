@@ -29,7 +29,7 @@ static void key_callback(GLFWwindow* _window, int key, int scancode, int action,
 }
 
 // Implementation 
-void AFLib_CreateWindow(AF_Window* _window, AF_Input* _input) {
+void AFLib_CreateWindow(AF_Window* _window) {
     if(!_window){
         printf("AFLib_CreateWindow: failed to create window, argment passed in a null window\n");
         return;
@@ -49,7 +49,7 @@ void AFLib_CreateWindow(AF_Window* _window, AF_Input* _input) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    GLFWwindow* glfwWindow = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+    GLFWwindow* glfwWindow = glfwCreateWindow(_window->windowWidth, _window->windowHeight, _window->title, NULL, NULL);
    
     
     if (!glfwWindow)
@@ -64,7 +64,7 @@ void AFLib_CreateWindow(AF_Window* _window, AF_Input* _input) {
     glfwMakeContextCurrent(glfwWindow);
 
     // Set the struct pointer as the user pointer of the window for input callback
-    glfwSetWindowUserPointer(glfwWindow, _input);
+    glfwSetWindowUserPointer(glfwWindow, _window->input);
 
 
     // Set callback
