@@ -31,7 +31,7 @@ inline static void AFSaveLog(const char* _message, const char* _format, __va_lis
 }
 */
 // If debug
-inline static void AFLibLog(const char* _message,...){
+inline static void AF_Log(const char* _message,...){
     printf(COLOR_GREEN);  // Set color to cyan for regular logs
     va_list args;
     va_start(args, _message);
@@ -40,7 +40,7 @@ inline static void AFLibLog(const char* _message,...){
     va_end(args);
 }
 
-inline static void AFLog(const char* _message,...){
+inline static void AF_Game_Log(const char* _message,...){
     printf(COLOR_CYAN);  // Set color to cyan for regular logs
     va_list args;
     va_start(args, _message);
@@ -50,7 +50,7 @@ inline static void AFLog(const char* _message,...){
 }
 
 
-inline static void AFLogWarning(const char* _message,...){
+inline static void AF_Log_Warning(const char* _message,...){
     printf(COLOR_YELLOW "Warning: ");  // Set color to yellow for warnings
     va_list args;
     va_start(args, _message);
@@ -58,7 +58,7 @@ inline static void AFLogWarning(const char* _message,...){
     va_end(args);
 }
 
-inline static void AFLogError(const char* _message,...){    
+inline static void AF_Log_Error(const char* _message,...){    
     fprintf(stderr, COLOR_RED "Error: ");  // Set color to red for errors
     va_list args;
     va_start(args, _message);
@@ -66,6 +66,9 @@ inline static void AFLogError(const char* _message,...){
     va_end(args);
 }
 
+#ifdef __cplusplus
+}
+#endif
 
 // Send to console
 // Store to log file

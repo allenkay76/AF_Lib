@@ -13,7 +13,7 @@ const uint16_t windowWidth = 1280;
 const uint16_t windowHeight = 720;
 
 int main(void) {
-    AFLibLog("MAIN: ENTRY POINT\n");
+    AF_LibLog("MAIN: ENTRY POINT\n");
 
     
     // Input
@@ -21,32 +21,32 @@ int main(void) {
 
    // Create the window
     AF_Window gameWindow = {0, &gameInput, windowTitle, windowWidth, windowHeight};
-    AFLib_CreateWindow(&gameWindow);
+    AF_Lib_CreateWindow(&gameWindow);
 
     // Create the renderer
-    AFLIB_InitRenderer();
+    AF_LIB_InitRenderer();
 
     
     // update the window
     while(AFLib_UpdateWindow(&gameWindow)){
 
         // Display the renderer
-        AFLIB_DisplayRenderer();
+        AF_LIB_DisplayRenderer();
 
         // Check for escape key pressed
         if(gameInput.lastKeyCodePressed == 256){
-            AFLog("GAME: ESC pressed \n");
-            AFLogWarning("warning\n");
-            AFLogError("error test\n");
+            AF_Log("GAME: ESC pressed \n");
+            AF_LogWarning("warning\n");
+            AF_LogError("error test\n");
             break;
         }
     }
 
     // Destroy the renderer
-    AFLIB_DestroyRenderer();
+    AF_LIB_DestroyRenderer();
 
     // Destroy the window
-    AFLib_TerminateWindow(&gameWindow);
+    AF_Lib_TerminateWindow(&gameWindow);
     return 0;
 }
 
