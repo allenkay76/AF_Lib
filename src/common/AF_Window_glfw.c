@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "AF_Input.h"
 #include "AF_Log.h"
+
 //#include <glad/gl.h>
 // ------- Create Platform Independent Window -------
 const char* glfwWindowFileTitle = "AF_Window_GLFW:";

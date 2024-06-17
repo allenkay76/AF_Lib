@@ -4,6 +4,8 @@
 #include "AF_Input.h"
 #include "AF_Renderer.h"
 #include "AF_Log.h"
+#include "AF_Camera.h"
+#include "AF_MeshData.h"
 
 // Forward declare of c function
 int main(void);
@@ -13,9 +15,13 @@ const uint16_t windowWidth = 1280;
 const uint16_t windowHeight = 720;
 
 int main(void) {
-    AF_LibLog("MAIN: ENTRY POINT\n");
-
+    AF_Log("MAIN: ENTRY POINT\n");
     
+    // Meshdata
+    AF_MeshData gameMeshData;
+
+    // Camera
+    AF_CCamera gameCamera;
     // Input
     AF_Input gameInput =  {0,0,0.0f, 0.0f};
 
@@ -24,20 +30,20 @@ int main(void) {
     AF_Lib_CreateWindow(&gameWindow);
 
     // Create the renderer
-    AF_LIB_InitRenderer();
+    AF_LIB_InitRenderer(&gameWindow);
 
     
     // update the window
-    while(AFLib_UpdateWindow(&gameWindow)){
+    while(AF_Lib_UpdateWindow(&gameWindow)){
 
         // Display the renderer
-        AF_LIB_DisplayRenderer();
+        AF_LIB_DisplayRenderer(&gameWindow, &gameCamera, &gameMeshData);
 
         // Check for escape key pressed
         if(gameInput.lastKeyCodePressed == 256){
             AF_Log("GAME: ESC pressed \n");
-            AF_LogWarning("warning\n");
-            AF_LogError("error test\n");
+            AF_Log_Warning("warning\n");
+            AF_Log_Error("error test\n");
             break;
         }
     }
