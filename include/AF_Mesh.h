@@ -1,6 +1,7 @@
 #ifndef AF_MESH_H
 #define AF_MESH_H
 #include "AF_Vertex.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -9,7 +10,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif  
-const char* fileTitle = "AF_Mesh: ";
+
+#define AF_MESH_FILE_TITLE "AF_Mesh: "
+
 typedef struct {
     AF_Vertex* vertices;
     int vertexCount;
@@ -18,7 +21,7 @@ typedef struct {
 } AF_Mesh;
 
 inline AF_Vec2 AF_Mesh_GetVec2FromString(char* _buffer){ //, uint16_t _size){
-    AF_Vec2 returnVec2;
+    AF_Vec2 returnVec2 = {0.0f, 0.0f};
     char* token = strtok(_buffer, " ");
     if(token != NULL){
         float num1 = strtof(token, NULL);
@@ -35,7 +38,7 @@ inline AF_Vec2 AF_Mesh_GetVec2FromString(char* _buffer){ //, uint16_t _size){
 }
 
 inline AF_Vec3 AF_Mesh_GetVec3FromString(char* _buffer){ //, uint16_t _size){
-    AF_Vec3 returnVec3;
+    AF_Vec3 returnVec3 = {0.0f, 0.0f, 0.0f};
     char* token = strtok(_buffer, " ");
     if(token != NULL){
         float num1 = strtof(token, NULL);
@@ -57,7 +60,7 @@ inline AF_Vec3 AF_Mesh_GetVec3FromString(char* _buffer){ //, uint16_t _size){
 inline AF_Mesh AF_Mesh_GetOBJAttribSize(FILE* _file){
     AF_Mesh mesh = {NULL, 0, NULL, 0};
     if(_file == NULL){
-        AF_Log_Error("%s Failed to open file to GetOBJAttribSize %s", fileTitle);
+        AF_Log_Error("%s Failed to open file to GetOBJAttribSize %s", AF_MESH_FILE_TITLE);
         return mesh;
     }
 
@@ -122,7 +125,7 @@ inline int AF_Mesh_Load_Data(FILE* _file, AF_Mesh* _mesh){
                 // vertex
                 AF_Vec3 vertPos = AF_Mesh_GetVec3FromString(fileBuffer);
                 vertex.position = vertPos;
-                AF_Log("v %f %f %f\n", vertex.position.x, vertex.position.y, vertex.position.z);
+                //AF_Log("v %f %f %f\n", vertex.position.x, vertex.position.y, vertex.position.z);
 
                 _mesh->vertices[verticesCount] = vertex;
                 verticesCount++;
@@ -140,28 +143,28 @@ inline int AF_Mesh_Load_Data(FILE* _file, AF_Mesh* _mesh){
                     index = strtof(token, NULL);
                     _mesh->indices[indicesCount] = index;
                     indicesCount++;
-                    AF_Log("i %i\n", index);
+                    //AF_Log("i %i\n", index);
 
                     // face 2
                     token = strtok(NULL, " ");
                     index = strtof(token, NULL);
                     _mesh->indices[indicesCount] = index;
                     indicesCount++;
-                    AF_Log("i %i\n", index);
+                    //AF_Log("i %i\n", index);
 
                     // face 3
                     token = strtok(NULL, " ");
                     index = strtof(token, NULL);
                     _mesh->indices[indicesCount] = index;
                     indicesCount++;
-                    AF_Log("i %i\n", index);
+                    //AF_Log("i %i\n", index);
 
                     // face 4
                     token = strtok(NULL, " ");
                     index = strtof(token, NULL);
                     _mesh->indices[indicesCount] = index;
                     indicesCount++;
-                    AF_Log("i %i\n", index);
+                    //AF_Log("i %i\n", index);
                 }
                 
 
@@ -190,7 +193,7 @@ inline int AF_Mesh_Load_Data(FILE* _file, AF_Mesh* _mesh){
 }
 
 
-inline static int AF_Mesh_Load_OBJ(const char* _filePath, AF_Mesh* _mesh){
+inline int AF_Mesh_Load_OBJ(const char* _filePath, AF_Mesh* _mesh){
     if(_mesh == NULL){
         return 0;
     }
@@ -199,34 +202,35 @@ inline static int AF_Mesh_Load_OBJ(const char* _filePath, AF_Mesh* _mesh){
     FILE *file = fopen(_filePath, "r"); // Open the file for reading
     
     if(file == NULL){
-        AF_Log_Error("%s Failed to open file %s", fileTitle, _filePath);
+        AF_Log_Error("%s Failed to open file %s", AF_MESH_FILE_TITLE, _filePath);
         return 0;
     }
 
-    AF_Mesh mesh;
-    mesh = AF_Mesh_GetOBJAttribSize(file);
+    AF_Mesh mesh = AF_Mesh_GetOBJAttribSize(file);
+    _mesh->indexCount = mesh.indexCount;
+    _mesh->vertexCount = mesh.vertexCount;
 
     // Create verticies array of size vertexCount
-    mesh.vertices = (AF_Vertex*)malloc(sizeof(AF_Vertex) * mesh.vertexCount);
+    _mesh->vertices = (AF_Vertex*)malloc(sizeof(AF_Vertex) * _mesh->vertexCount);
 
     // create indices array of size indexCount
-    mesh.indices = (int*)malloc(sizeof(int) * mesh.indexCount);
-    AF_Mesh_Load_Data(file, &mesh);
-    for(int i = 0; i < mesh.vertexCount; i++){
-        AF_Log("V %f %f %f\n", mesh.vertices[i].position.x, mesh.vertices[i].position.y, mesh.vertices[i].position.z);
+    _mesh->indices = (int*)malloc(sizeof(int) * _mesh->indexCount);
+    AF_Mesh_Load_Data(file, _mesh);
+    for(int i = 0; i < _mesh->vertexCount; i++){
+        //AF_Log("V %f %f %f\n", mesh.vertices[i].position.x, mesh.vertices[i].position.y, mesh.vertices[i].position.z);
     }
 
-    for(int i = 0; i < mesh.indexCount; i++){
-        AF_Log("I %i\n", mesh.indices[i]);
+    for(int i = 0; i < _mesh->indexCount; i++){
+        //AF_Log("I %i\n", mesh.indices[i]);
     }
 
-    AF_Log("Mesh Verticies %d\n", mesh.vertexCount);
-    AF_Log("Mesh Indices %d\n", mesh.indexCount);
+    //AF_Log("Mesh Verticies %d\n", mesh.vertexCount);
+    //AF_Log("Mesh Indices %d\n", mesh.indexCount);
     
     return 1;
 }
 
-void AF_Mesh_Destroy(AF_Mesh* _mesh){
+inline void AF_Mesh_Destroy(AF_Mesh* _mesh){
     if(_mesh == NULL){
         return;
     }
