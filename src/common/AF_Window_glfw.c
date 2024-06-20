@@ -47,6 +47,7 @@ void AF_Lib_CreateWindow(AF_Window* _window) {
     }
 
     
+    
     // If using openGL 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

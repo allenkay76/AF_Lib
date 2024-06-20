@@ -57,6 +57,7 @@ elseif(APPLE)
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/../AF_Math/include
         ${CMAKE_SOURCE_DIR}/../../SDK/glfw/include
+        ${CMAKE_SOURCE_DIR}/../SDK/glew-2.1.0/include
         /usr/local/include
         
     )
@@ -73,6 +74,7 @@ elseif(APPLE)
         # Add other library directories as needed
         ${CMAKE_SOURCE_DIR}/../../SDK/glfw/lib-x86_64
         /usr/local/lib
+        /usr/local/Cellar/glew/2.2.0_1/lib
         #${CMAKE_SOURCE_DIR}/../../SDK/vulkan/macOS/lib
     )
 endif()
@@ -108,7 +110,7 @@ elseif(APPLE)
         #opengl32
         #glu32
         #glew32
-        #GLEW
+        GLEW
         #freetype
         #ssp
         #libMoltenVK.dylib

@@ -9,7 +9,10 @@ extern "C" {
 #endif
 
 // Init
-void AF_LIB_InitRenderer(AF_Window* _window);
+int AF_LIB_InitRenderer(AF_Window* _window);
+
+void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList);
+
 //void Init(GLFWwindow* _window, std::vector<Entity*>& _entities);
 //void InitRenderingData(std::vector<Entity*>& _entities);
 //static AF_MeshBuffers InitBuffers(const AF_MeshBuffers& _bufferObject);

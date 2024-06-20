@@ -10,6 +10,8 @@ typedef struct {
     // array of meshes
     AF_Mesh* meshes;
     int numMeshes;
+    int vao;
+    int vbo;
 } AF_MeshData;
 
 inline int AF_MeshData_Destroy(AF_MeshData* _meshData){
