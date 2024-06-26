@@ -20,7 +20,7 @@ typedef struct {
     int indexCount;
 } AF_Mesh;
 
-inline AF_Vec2 AF_Mesh_GetVec2FromString(char* _buffer){ //, uint16_t _size){
+static inline AF_Vec2 AF_Mesh_GetVec2FromString(char* _buffer){ //, uint16_t _size){
     AF_Vec2 returnVec2 = {0.0f, 0.0f};
     char* token = strtok(_buffer, " ");
     if(token != NULL){
@@ -37,7 +37,7 @@ inline AF_Vec2 AF_Mesh_GetVec2FromString(char* _buffer){ //, uint16_t _size){
     return returnVec2;
 }
 
-inline AF_Vec3 AF_Mesh_GetVec3FromString(char* _buffer){ //, uint16_t _size){
+static inline AF_Vec3 AF_Mesh_GetVec3FromString(char* _buffer){ //, uint16_t _size){
     AF_Vec3 returnVec3 = {0.0f, 0.0f, 0.0f};
     char* token = strtok(_buffer, " ");
     if(token != NULL){
@@ -57,10 +57,10 @@ inline AF_Vec3 AF_Mesh_GetVec3FromString(char* _buffer){ //, uint16_t _size){
     return returnVec3;
 }
 
-inline AF_Mesh AF_Mesh_GetOBJAttribSize(FILE* _file){
+static inline AF_Mesh AF_Mesh_GetOBJAttribSize(FILE* _file){
     AF_Mesh mesh = {NULL, 0, NULL, 0};
     if(_file == NULL){
-        AF_Log_Error("%s Failed to open file to GetOBJAttribSize %s", AF_MESH_FILE_TITLE);
+        AF_Log_Error("%s Failed to open file to GetOBJAttribSize %s\n", AF_MESH_FILE_TITLE);
         return mesh;
     }
 
@@ -75,11 +75,11 @@ inline AF_Mesh AF_Mesh_GetOBJAttribSize(FILE* _file){
         
          if(fgets(fileBuffer, 1024, _file) != NULL) {
         // print the return value (aka string read in) to terminal
-            AF_Vertex vertex;
+            //AF_Vertex vertex ;
             if(fileBuffer[0] == 'v' && fileBuffer[1] == ' '){
                 // vertex
-                AF_Vec3 vertPos = AF_Mesh_GetVec3FromString(fileBuffer);
-                vertex.position = vertPos;
+                //AF_Vec3 vertPos = AF_Mesh_GetVec3FromString(fileBuffer);
+                //vertex.position = vertPos;
                 mesh.vertexCount++;
                 continue;
             }
@@ -88,6 +88,9 @@ inline AF_Mesh AF_Mesh_GetOBJAttribSize(FILE* _file){
                 // add 4 faces to the index count
                 mesh.indexCount+=4;
                 continue;
+
+
+
             }
             if(fileBuffer[0] == 'v' && fileBuffer[1] == 't'){
                 // texture coordinate
@@ -113,7 +116,7 @@ inline AF_Mesh AF_Mesh_GetOBJAttribSize(FILE* _file){
     return mesh;
 }
 
-inline int AF_Mesh_Load_Data(FILE* _file, AF_Mesh* _mesh){
+static inline int AF_Mesh_Load_Data(FILE* _file, AF_Mesh* _mesh){
     int verticesCount = 0;
     int indicesCount = 0;
     char fileBuffer[1024] ; // Buffer for reading the file
@@ -193,7 +196,7 @@ inline int AF_Mesh_Load_Data(FILE* _file, AF_Mesh* _mesh){
 }
 
 
-inline int AF_Mesh_Load_OBJ(const char* _filePath, AF_Mesh* _mesh){
+static inline int AF_Mesh_Load_OBJ(const char* _filePath, AF_Mesh* _mesh){
     if(_mesh == NULL){
         return 0;
     }
