@@ -1,3 +1,11 @@
+/*
+===============================================================================
+AF_Window_glfw implementation
+
+Implementation for AF_Window using GLFW
+Calls GLFW library to handling window creation and input handling
+===============================================================================
+*/
 #include "AF_Window.h"
 #include <stdio.h>
 #define GLFW_INCLUDE_NONE
@@ -5,17 +13,29 @@
 #include "AF_Input.h"
 #include "AF_Log.h"
 
-//#include <glad/gl.h>
 // ------- Create Platform Independent Window -------
+// TODO: make this get passed into create window
 const char* glfwWindowFileTitle = "AF_Window_GLFW:";
 
 
-// forward declare
+/*
+====================
+error_callback
+General Error callback used by glfw
+====================
+*/
 void error_callback(int error, const char* description)
 {
     AF_Log_Error("%s %s %i\n", glfwWindowFileTitle, description, error);
 }
 
+
+/*
+====================
+key_callback
+Key callback used by glfw
+====================
+*/
 static void key_callback(GLFWwindow* _window, int key, int scancode, int action, int mods)
 {
     if(scancode){}
@@ -30,9 +50,16 @@ static void key_callback(GLFWwindow* _window, int key, int scancode, int action,
     }
 }
 
-// Implementation 
+
+/*
+====================
+AF_Lib_CreateWindow
+Create a window using GLFW
+====================
+*/
 void AF_Lib_CreateWindow(AF_Window* _window) {
     if(!_window){
+        printf("%s CreateWindow: _window is NULL\n", glfwWindowFileTitle);
         AF_Log_Error("%s CreateWindow: failed to create window\n", glfwWindowFileTitle);
         return;
     }
@@ -45,9 +72,7 @@ void AF_Lib_CreateWindow(AF_Window* _window) {
         // Initialization failed
         AF_Log_Error("%sCreateWindow: Failed to init glfw\n", glfwWindowFileTitle);
     }
-
-    
-    
+ 
     // If using openGL 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -74,6 +99,12 @@ void AF_Lib_CreateWindow(AF_Window* _window) {
     glfwSetKeyCallback(glfwWindow, key_callback);
 }
 
+/*
+====================
+AF_Lib_UpdateWindow
+Update the window
+====================
+*/
 BOOL AF_Lib_UpdateWindow(AF_Window* _window){
     // while
     if (glfwWindowShouldClose(_window->window))
@@ -83,7 +114,6 @@ BOOL AF_Lib_UpdateWindow(AF_Window* _window){
     }
     
     /* Render here */
-    //glClear(GL_COLOR_BUFFER_BIT);
 
     /* Swap front and back buffers */
     glfwSwapBuffers(_window->window);
@@ -95,6 +125,11 @@ BOOL AF_Lib_UpdateWindow(AF_Window* _window){
 }
 
 
+/*====================
+AF_Lib_TerminateWindow
+Destroy the window
+====================
+*/
 void AF_Lib_TerminateWindow(AF_Window* _window){
     // null check the struct
     if(!_window){
@@ -109,6 +144,7 @@ void AF_Lib_TerminateWindow(AF_Window* _window){
     }
 
     AF_Log("%s TerminateWindow:\n", glfwWindowFileTitle);
+
      // Destory the wndow
     glfwDestroyWindow(_window->window);
     glfwTerminate();

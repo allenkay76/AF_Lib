@@ -1,3 +1,11 @@
+/*
+===============================================================================
+AF_OpenGL_Renderer Implementation
+
+Implementation of the AF_LIB rendering functions
+This implementation is for OpenGL
+===============================================================================
+*/
 #include "AF_Renderer.h"
 #include <stdio.h>
 #include "AF_Log.h"
@@ -5,9 +13,15 @@
 #include <GL/glew.h>
 #define GL_SILENCE_DEPRECATION
 
+// string to use in logging
 const char* openglRendererFileTitle = "AF_OpenGL_Renderer:";
 
-
+/*
+====================
+AF_CheckGLError
+Helper function for checking for GL errors
+====================
+*/
 void AF_CheckGLError(const char* _message){
     AF_Log(_message);
     
@@ -19,7 +33,12 @@ void AF_CheckGLError(const char* _message){
     
 }
 
-// Implementations
+/*
+====================
+AF_LIB_InitRenderer
+Init OpenGL
+====================
+*/
 int AF_LIB_InitRenderer(AF_Window* _window){
     int success = 1;
     AF_Log("%s Initialized %s\n", openglRendererFileTitle, _window->title);
@@ -58,6 +77,12 @@ int AF_LIB_InitRenderer(AF_Window* _window){
     return success;
 } 
 
+/*
+====================
+AF_LIB_InitMeshBuffers
+Init the mesh buffers for OpenGL
+====================
+*/
 void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList){    
     int vertexBufferSize = 0;
     //int indexBufferSize = 0;
@@ -93,6 +118,12 @@ void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList){
     
 }
 
+/*
+====================
+AF_LIB_DisplayRenderer
+Display the renderer
+====================
+*/
 void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList){
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -102,7 +133,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
     _meshList->numMeshes = _meshList->numMeshes;
     for(int i = 0; i < _meshList->numMeshes; i++){
         // Draw mesh
-        //AF_Log("AF_OpenGL_Renderer:\nRendering mesh %i: %i verts, %i indices\n", i, _meshList->meshes[i].vertexCount,_meshList->meshes[i].indexCount);
+        AF_Log("AF_OpenGL_Renderer:\nRendering mesh %i: %i verts, %i indices\n", i, _meshList->meshes[i].vertexCount,_meshList->meshes[i].indexCount);
         
         
         // view/projection transformations
@@ -134,6 +165,12 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         
 }
 
+/*
+====================
+AF_LIB_DestroyRenderer
+Destroy the renderer
+====================
+*/
 void AF_LIB_DestroyRenderer(void){
     AF_Log("%s Destroyed\n", openglRendererFileTitle);
 
@@ -141,6 +178,4 @@ void AF_LIB_DestroyRenderer(void){
     // ------------------------------------------------------------------------
     //glDeleteVertexArrays(1, &cubeVAO);
     //glDeleteBuffers(1, &VBO);
-
-    
 }
