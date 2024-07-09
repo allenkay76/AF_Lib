@@ -9,9 +9,11 @@ extern "C" {
 typedef struct {
     // array of meshes
     AF_Mesh* meshes;
-    int numMeshes;
-    int vao;
-    int vbo;
+    uint32_t numMeshes;
+    uint32_t vao;
+    uint32_t vbo;
+    uint32_t ibo;
+    uint32_t shaderID;
 } AF_MeshData;
 
 inline int AF_MeshData_Destroy(AF_MeshData* _meshData){

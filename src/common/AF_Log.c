@@ -14,12 +14,21 @@ AF_Log_Error
 Log standard error to console
 ====================
 */
-void AF_Log_Error(const char* _message,...){    
-    fprintf(stderr, COLOR_RED "Error: ");  // Set color to red for errors
+void AF_Log_Error(const char* _message,...) {
+    if (_message == NULL) {
+        fprintf(stderr, COLOR_RED "Error: Invalid format string\n" COLOR_RESET);
+        return;
+    }
+
+    fprintf(stderr, COLOR_RED "Error: " COLOR_RESET);  // Set color to red for errors
+    //fprintf("%s",_message);
+    
     va_list args;
     va_start(args, _message);
+    
     vfprintf(stderr, _message, args);
     va_end(args);
+    
 }
 
 /*

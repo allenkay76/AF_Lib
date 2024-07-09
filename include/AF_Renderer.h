@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+void CheckGLError(const char * _message);
+
 // Init
 int AF_LIB_InitRenderer(AF_Window* _window);
 
@@ -79,7 +81,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 
 
 // Destroy
-void AF_LIB_DestroyRenderer(void);
+void AF_LIB_DestroyRenderer(AF_MeshData* _meshList);
 // Cleanup
 //static void CleanUpMesh(const unsigned int _shaderID);
 //void CloseWindow();

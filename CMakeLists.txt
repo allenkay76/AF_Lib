@@ -149,7 +149,7 @@ target_compile_options(AF_Lib PRIVATE
     #-D_FORTIFY_SOURCE=2
     #-fsanitize=address
     #-O3
-    #-v
+    -v
     #-shared
     #-o
 )

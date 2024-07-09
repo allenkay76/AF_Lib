@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
 typedef struct  {
-    AF_CTransform3D* transform;
+    AF_CTransform3D transform;
     AF_Vec3 cameraPosition;
     AF_Vec3 cameraFront;
     float yaw;
