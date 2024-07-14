@@ -1,17 +1,20 @@
 #ifndef AF_CAMERA_H
 #define AF_CAMERA_H
 #include "AF_CTransform3D.h"
+#include "AF_Mat4.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct  {
-    AF_CTransform3D transform;
-    AF_Vec3 cameraPosition;
+    AF_CTransform3D* transform;
     AF_Vec3 cameraFront;
     float yaw;
     float pitch;
+    float fov;
+    AF_Mat4 projectionMatrix;
+    AF_Mat4 viewMatrix;
 } AF_CCamera;
 
 // Function that takes a CTransform3D object

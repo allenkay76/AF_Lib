@@ -3,6 +3,7 @@
 #include "AF_Window.h"
 #include "AF_Camera.h"
 #include "AF_MeshData.h"
+#include "AF_CTransform3D.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,7 +76,8 @@ void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList);
 
 
 // Draw
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList);
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms );
+ 
 //void DrawFrame(GLFWwindow* _window, Entity& _cameraEntity, std::vector<Entity*>& _entities);
 //static void RenderMesh(const AF_Mesh& _mesh, const AF_Camera& _camera);
 

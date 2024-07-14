@@ -1,7 +1,6 @@
 #ifndef AF_TRANSFORM3D_H
 #define AF_TRANSFORM3D_H
 #include "AF_Vec3.h"
-#include "AF_Mat4.h"
 #include "AF_Lib_Define.h"
 
 #ifdef __cplusplus
@@ -14,12 +13,6 @@ typedef struct {
     AF_Vec3 pos;// = {0.0f, 0.0f, 0.0f};
     AF_Vec3 rot;// = {0.0f, 0.0f, 0.0f};
     AF_Vec3 scale;// = {1.0f, 1.0f, 1.0f};
-    AF_Vec3 velocity;// = {0.0f, 0.0f, 0.0f};
-    AF_Mat4 matrix;/* = {  AF_Vec4{1.0f, 1.0f, 1.0f, 1.0f},
-                        AF_Vec4{1.0f, 1.0f, 1.0f, 1.0f},
-                        AF_Vec4{1.0f, 1.0f, 1.0f, 1.0f},
-                        AF_Vec4{1.0f, 1.0f, 1.0f, 1.0f}};
-                        */
 } AF_CTransform3D;
 
 

@@ -10,6 +10,7 @@ This implementation is for OpenGL
 #include <stdio.h>
 #include "AF_Log.h"
 #include "AF_Vec3.h"
+#include "AF_Mat4.h"
 #include <GL/glew.h>
 #define GL_SILENCE_DEPRECATION
 
@@ -184,13 +185,13 @@ AF_LIB_DisplayRenderer
 Display the renderer
 ====================
 */
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList){
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms ){
     AF_CheckGLError( "Error at start of Rendering OpenGL! \n");
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //printf("OpenGL Display\n");
     _window->title = _window->title;
-    _camera->transform.pos = _camera->transform.pos;
+    _camera->transform->pos = _camera->transform->pos;
     _meshList->numMeshes = _meshList->numMeshes;
 
 
@@ -213,15 +214,47 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         
         
         // view/projection transformations
-        //projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        //glm::mat4 view = camera.GetViewMatrix();
-        //lightingShader.setMat4("projection", projection);
-        //lightingShader.setMat4("view", view);
+	AF_Mat4 projection = _camera->projectionMatrix;/*{{
+    		{1.0f, 0.0f, 0.0f, 0.0f},
+    		{0.0f, 1.0f, 0.0f, 0.0f},
+    		{0.0f, 0.0f, 1.0f, 0.0f},
+    		{0.0f, 0.0f, 0.0f, 1.0f}
+	}};*/
+	
+	GLint projLocation = glGetUniformLocation(_meshList->shaderID, "projection");
+	glUniformMatrix4fv(projLocation, 1, GL_FALSE, (float*)&projection.rows[0]);
 
-        // world transformation
-        //glm::mat4 model = glm::mat4(1.0f);
-        //lightingShader.setMat4("model", model);
-
+	// View:
+	AF_Mat4 view = _camera->viewMatrix;/*{{
+    		{1.0f, 0.0f, 0.0f, 0.0f},
+    		{0.0f, 1.0f, 0.0f, 0.0f},
+    		{0.0f, 0.0f, 1.0f, 0.0f},
+    		{0.0f, 0.0f, 0.0f, 1.0f}
+	}};*/
+	GLint viewLocation = glGetUniformLocation(_meshList->shaderID, "view");
+	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, (float*)&view.rows[0]);
+	
+	// TODO: put into forloop to upate shader with all model transforms
+	
+	// world transformation
+	if(_meshTransforms == NULL){
+		AF_Log_Error("AF_OpenGL_Renderer::Render: Null mesh transforms\n");
+		return;
+	}
+	// convert to vec4 for model matrix
+	AF_Vec4 modelPos = {_meshTransforms[0].pos.x, _meshTransforms[0].pos.y, _meshTransforms[0].pos.z, 1.0f};
+	// Create the model matrix in row oder format
+	AF_Mat4 modelMatrix = {{
+		{1.0f, 0.0f, 0.0f, 0.0f},
+		{0.0f, 1.0f, 0.0f, 0.0f},
+    		{0.0f, 0.0f, 1.0f, 0.0f},
+    		modelPos			// Row order position
+	}};
+	
+	// Set model matrix Mat4 for shader
+	GLint modelLocation = glGetUniformLocation(_meshList->shaderID, "model");
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, (float*)&modelMatrix.rows[0]);
+	
         // bind diffuse map
         //glActiveTexture(GL_TEXTURE0);
         //glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -231,7 +264,10 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 
         // calculate the model matrix for each object and pass it to shader before drawing
         //glm::mat4 model = glm::mat4(1.0f);
-        //model = glm::translate(model, cubePositions[i]);
+	 
+	
+	AF_Log("Model %f\n", &modelMatrix);
+		//model = glm::translate(model, cubePositions[i]);
         //float angle = 20.0f * i;
         //model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 
