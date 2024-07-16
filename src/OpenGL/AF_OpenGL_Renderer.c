@@ -38,6 +38,9 @@ unsigned int indices[] = {  // note that we start from 0!
     1, 2, 3   // second Triangle
 };
 
+
+
+
 /*
 ====================
 AF_CheckGLError
@@ -54,8 +57,41 @@ void AF_CheckGLError(const char* _message){
         printf("\nGL Error: %i\n", error);
 
     }
-    
 }
+
+/*
+====================
+AF_Log_Mat4
+Take a AF_Mat 4 and log it to the console.
+====================
+*/
+
+void AF_Log_Mat4(AF_Mat4 _mat4){
+	AF_Log("	Row 1: %f %f %f %f\n\
+		Row 2: %f %f %f %f\n\
+		Row 3: %f %f %f %f\n\
+		Row 4: %f %f %f %f\n\n",
+		_mat4.rows[0].x, 
+		_mat4.rows[0].y,
+		_mat4.rows[0].z,
+		_mat4.rows[0].w,
+
+		_mat4.rows[1].x,
+		_mat4.rows[1].y,
+		_mat4.rows[1].z,
+		_mat4.rows[1].w,
+
+		_mat4.rows[2].x,
+		_mat4.rows[2].y,
+		_mat4.rows[2].z,
+		_mat4.rows[2].w,
+
+		_mat4.rows[3].x,
+		_mat4.rows[3].y,
+		_mat4.rows[3].z,
+		_mat4.rows[3].w);
+}
+
 
 /*
 ====================
@@ -92,7 +128,7 @@ int AF_LIB_InitRenderer(AF_Window* _window){
     //set the glViewport and the perspective
     glViewport(0, 0, _window->windowWidth, _window->windowHeight);
 
-    // configure global opengl state
+        // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
     AF_CheckGLError( "Error initializing OpenGL! \n");
@@ -192,6 +228,34 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
     //printf("OpenGL Display\n");
     _window->title = _window->title;
     _camera->transform->pos = _camera->transform->pos;
+    _camera->windowWidth = _window->windowWidth;
+    _camera->windowHeight = _window->windowHeight;
+
+
+    // update the game camera with the window width
+   
+    // update camera vectors
+    //TODO: put in switch if using mouse look to calculate front based on yaw and pitch
+    AF_Vec3 front = _camera->cameraFront;//AF_Camera_CalculateFront(yaw, pitch);
+
+    // calculate Right
+    AF_Vec3 right = AFV3_NORMALIZE(AFV3_CROSS(front, _camera->cameraWorldUp));
+	
+    // calculate up
+    AF_Vec3 up = AFV3_NORMALIZE(AFV3_CROSS(right, front));
+	
+    // Calculate view matrix:vs
+    //
+    AF_Mat4 viewMatrix = AF_Math_Lookat(_camera->transform->pos, AFV3_ADD(_camera->transform->pos,front), up);
+    _camera->viewMatrix = viewMatrix;
+
+    // Calculate projection matrix
+    //if(_camera->orthographic == TRUE){
+    	_camera->projectionMatrix = AF_Camera_GetOrthographicProjectionMatrix(_camera);
+    //}else{
+	//AF_Log("OpenGL_Renderer: NO Projection Matrix setup \n");
+    //}
+
     _meshList->numMeshes = _meshList->numMeshes;
 
 
@@ -212,27 +276,14 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         // Draw mesh
         //AF_Log("AF_OpenGL_Renderer:\nRendering mesh %i: %i verts, %i indices\n", i, _meshList->meshes[i].vertexCount,_meshList->meshes[i].indexCount);
         
-        
-        // view/projection transformations
-	AF_Mat4 projection = _camera->projectionMatrix;/*{{
-    		{1.0f, 0.0f, 0.0f, 0.0f},
-    		{0.0f, 1.0f, 0.0f, 0.0f},
-    		{0.0f, 0.0f, 1.0f, 0.0f},
-    		{0.0f, 0.0f, 0.0f, 1.0f}
-	}};*/
-	
+        // Send camrea data to shader
+        // Projection Matrix
 	GLint projLocation = glGetUniformLocation(_meshList->shaderID, "projection");
-	glUniformMatrix4fv(projLocation, 1, GL_FALSE, (float*)&projection.rows[0]);
+	glUniformMatrix4fv(projLocation, 1, GL_FALSE, (float*)&_camera->projectionMatrix.rows[0]);
 
-	// View:
-	AF_Mat4 view = _camera->viewMatrix;/*{{
-    		{1.0f, 0.0f, 0.0f, 0.0f},
-    		{0.0f, 1.0f, 0.0f, 0.0f},
-    		{0.0f, 0.0f, 1.0f, 0.0f},
-    		{0.0f, 0.0f, 0.0f, 1.0f}
-	}};*/
+	// View Matrix
 	GLint viewLocation = glGetUniformLocation(_meshList->shaderID, "view");
-	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, (float*)&view.rows[0]);
+	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, (float*)&_camera->viewMatrix.rows[0]);
 	
 	// TODO: put into forloop to upate shader with all model transforms
 	
@@ -266,7 +317,6 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         //glm::mat4 model = glm::mat4(1.0f);
 	 
 	
-	AF_Log("Model %f\n", &modelMatrix);
 		//model = glm::translate(model, cubePositions[i]);
         //float angle = 20.0f * i;
         //model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
@@ -279,16 +329,8 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         glBindVertexArray(_meshList->vao);
         AF_CheckGLError( "Error bind vao Rendering OpenGL! \n");
         //---------------Send command to Graphics API to Draw Triangles------------
-        //glDrawElements(GL_TRIANGLES, (unsigned int)_meshList->meshes[0].indexCount, GL_UNSIGNED_INT, NULL);
         
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-        //AF_CheckGLError( "Error drawTriangles Rendering OpenGL! \n");
         glDrawElements(GL_TRIANGLES, (unsigned int)_meshList->meshes[0].indexCount, GL_UNSIGNED_INT, 0);
-        //glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
-        //AF_Mesh* mesh = &_meshList->meshes[0];
-        //AF_Log("Mesh: %i\n",mesh->indexCount);
-        //glDrawElements(GL_TRIANGLES, (unsigned int)_meshList->meshes[0].indexCount, GL_UNSIGNED_INT, 0);
         
        AF_CheckGLError( "Error drawElements Rendering OpenGL! \n");
         

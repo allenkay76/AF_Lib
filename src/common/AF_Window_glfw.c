@@ -97,6 +97,7 @@ void AF_Lib_CreateWindow(AF_Window* _window) {
 
     // Set callback
     glfwSetKeyCallback(glfwWindow, key_callback);
+
 }
 
 /*
@@ -149,4 +150,6 @@ void AF_Lib_TerminateWindow(AF_Window* _window){
     glfwDestroyWindow(_window->window);
     glfwTerminate();
 }
+
+
 
