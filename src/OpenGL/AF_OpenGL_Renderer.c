@@ -272,7 +272,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
     glUseProgram(_meshList->shaderID); 
     AF_CheckGLError( "Error at useProgram Rendering OpenGL! \n");
     
-    //for(uint32_t i = 0; i < _meshList->numMeshes; i++){
+    for(uint32_t i = 0; i < _meshList->numMeshes; i++){
         // Draw mesh
         //AF_Log("AF_OpenGL_Renderer:\nRendering mesh %i: %i verts, %i indices\n", i, _meshList->meshes[i].vertexCount,_meshList->meshes[i].indexCount);
         
@@ -293,7 +293,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 		return;
 	}
 	// convert to vec4 for model matrix
-	AF_Vec4 modelPos = {_meshTransforms[0].pos.x, _meshTransforms[0].pos.y, _meshTransforms[0].pos.z, 1.0f};
+	AF_Vec4 modelPos = {_meshTransforms[i].pos.x, _meshTransforms[i].pos.y, _meshTransforms[i].pos.z, 1.0f};
 	// Create the model matrix in row oder format
 	AF_Mat4 modelMatrix = {{
 		{1.0f, 0.0f, 0.0f, 0.0f},
@@ -336,7 +336,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         
         glBindVertexArray(0);
         AF_CheckGLError( "Error bindvertexarray(0) Rendering OpenGL! \n");
-    //}
+    }
     AF_CheckGLError( "Error at end Rendering OpenGL! \n");
 }
 
