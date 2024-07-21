@@ -126,7 +126,7 @@ int AF_LIB_InitRenderer(AF_Window* _window){
     /**/
 
     //set the glViewport and the perspective
-    glViewport(0, 0, _window->windowWidth, _window->windowHeight);
+    glViewport(_window->windowXPos, _window->windowYPos, _window->windowWidth, _window->windowHeight);
 
         // configure global opengl state
     // -----------------------------

@@ -12,6 +12,8 @@ Calls GLFW library to handling window creation and input handling
 #include <GLFW/glfw3.h>
 #include "AF_Input.h"
 #include "AF_Log.h"
+#include <GL/glew.h>
+#define GL_SILENCE_DEPRECATION
 
 // ------- Create Platform Independent Window -------
 // TODO: make this get passed into create window
@@ -67,6 +69,33 @@ static void key_callback(GLFWwindow* _window, int key, int scancode, int action,
     }
 }
 
+/*
+====================
+window_pos_callback
+Move window callback
+====================
+*/
+void window_pos_callback(GLFWwindow* _window, int _xpos, int _ypos){
+    // if the window is moved, update the glviewport
+    int width, height;
+    glfwGetWindowSize(_window, &width, &height);
+    //if(_xpos || _ypos){}
+    glViewport(_xpos, _ypos, width, height);
+}
+
+/*
+====================
+framebuffer_size_callback
+when the framebuffer size changes, update the glViewport
+====================
+*/
+void framebuffer_size_callback(GLFWwindow* _window, int _width, int _height)
+{
+    if(_window){}
+    glViewport(0, 0, _width, _height);
+}
+
+
 
 /*
 ====================
@@ -115,6 +144,26 @@ void AF_Lib_CreateWindow(AF_Window* _window) {
     // Set callback
     glfwSetKeyCallback(glfwWindow, key_callback);
 
+    // set window move callpack
+    glfwSetWindowPosCallback(glfwWindow, window_pos_callback);
+
+    // Set the window size correctly, needed for OSX retina displays
+    glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
+
+}
+
+/*
+====================
+AF_Window_Refresh
+Refresh the window by updating the viewport size
+====================
+*/
+
+void AF_Window_Refresh(AF_Window* _window){
+    // When on osx retina displays we often need to use the framebuffer to actually set the gl viewport size.
+    int width, height;
+    glfwGetFramebufferSize((GLFWwindow*)_window->window, &width, &height);
+    glViewport(0, 0, width, height);
 }
 
 /*

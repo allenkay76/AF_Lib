@@ -12,6 +12,8 @@ typedef struct {
     void* window;           // Pointer to the window object (implementation specific)
     void* input;            // Pointer to the input handling object (implementation specific)
     const char* title;      // Title of the window
+    uint16_t windowXPos;	// Window X position
+    uint16_t windowYPos;	// Window Y position
     uint16_t windowWidth;   // Width of the window
     uint16_t windowHeight;  // Height of the window
 } AF_Window;
@@ -28,6 +30,8 @@ BOOL AF_Lib_UpdateWindow(AF_Window* _window);
 /// @brief Terminates the window and releases all resources
 /// @param _window  pointer to the window struct containing the window object and other window data
 void AF_Lib_TerminateWindow(AF_Window* _window);
+
+void AF_Window_Refresh(AF_Window* _window);
 
 #ifdef __cplusplus
 }
