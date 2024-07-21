@@ -38,13 +38,30 @@ Key callback used by glfw
 */
 static void key_callback(GLFWwindow* _window, int key, int scancode, int action, int mods)
 {
+	// TODO: https://www.reddit.com/r/opengl/comments/i8lv8u/how_can_i_optimize_my_key_handling_and_make_it/
     if(scancode){}
     if(mods){}
+    AF_Input* input = (AF_Input*)glfwGetWindowUserPointer(_window);
 
+    if(action == GLFW_PRESS){
+	// find the key and set it to pressed
+	for(int i = 0; i < AF_INPUT_KEYS_MAPPED; i++){
+		if(input->keys[i].code == key){
+			input->keys[i].pressed = 1;
+		}
+	}
+    }else if(action == GLFW_RELEASE){
+	// find the key and set it to release
+	for(int i = 0; i < AF_INPUT_KEYS_MAPPED; i++){
+		if(input->keys[i].code == key){
+			input->keys[i].pressed = 0;
+		}
+	}
+
+    }
     // Retrieve the pointer to the AF_Input struct from the window user pointer
-    AF_Input* state = (AF_Input*)glfwGetWindowUserPointer(_window);
-    state->lastKeyCodePressed = key;
-
+    // increment the buffer to position the next key, rollover if at the end of the array
+     
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
         glfwSetWindowShouldClose(_window, GLFW_TRUE);
     }

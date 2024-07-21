@@ -4,10 +4,16 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#define AF_INPUT_KEYS_MAPPED 4
+
+typedef struct {
+	int code;
+	int pressed;
+} AF_Key;
 
 typedef struct {
     // input buffer que
-    int lastKeyCodePressed;
+    AF_Key keys[AF_INPUT_KEYS_MAPPED];
 
     // Mouse
     int mouseDown;
