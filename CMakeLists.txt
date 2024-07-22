@@ -49,7 +49,8 @@ list(APPEND SOURCE_FILES
 if(WIN32)
     include_directories(
         ${CMAKE_SOURCE_DIR}/include
-        
+        ${CMAKE_SOURCE_DIR}/../SDK/stb
+
         # Add other include directories as needed
     )
 elseif(APPLE)
@@ -58,6 +59,7 @@ elseif(APPLE)
         ${CMAKE_SOURCE_DIR}/../AF_Math/include
         ${CMAKE_SOURCE_DIR}/../../SDK/glfw/include
         ${CMAKE_SOURCE_DIR}/../SDK/glew-2.1.0/include
+	${CMAKE_SOURCE_DIR}/../SDK/stb
         /usr/local/include
         
     )

@@ -1,6 +1,7 @@
 #ifndef AF_MESH_DATA_H
 #define AF_MESH_DATA_H
 #include "AF_Mesh.h"
+#include "AF_Material.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,6 +10,7 @@ extern "C" {
 typedef struct {
     // array of meshes
     AF_Mesh* meshes;
+    AF_Material* materials;
     uint32_t numMeshes;
     uint32_t vao;
     uint32_t vbo;
@@ -21,6 +23,7 @@ inline int AF_MeshData_Destroy(AF_MeshData* _meshData){
         return 0;
     }
     free(_meshData->meshes);
+    free(_meshData->materials);
     return 1;
 }
 

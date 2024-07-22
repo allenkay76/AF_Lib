@@ -10,6 +10,7 @@ functions to load meshes, creating memory on the heap based on the size of the m
 #ifndef AF_MESH_H
 #define AF_MESH_H
 #include "AF_Vertex.h"
+// TODO: get rid of use of stb lib
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,6 +29,7 @@ typedef struct {
     int vertexCount;
     unsigned int* indices;
     int indexCount;
+    
 } AF_Mesh;
 
 /*
@@ -41,6 +43,7 @@ Used for extracting things like tex coords out of a .obj
 static inline AF_Vec2 AF_Mesh_GetVec2FromString(char* _buffer){ //, uint16_t _size){
     AF_Vec2 returnVec2 = {0.0f, 0.0f};
     char* token = strtok(_buffer, " ");
+    token = strtok(NULL, " ");
     if(token != NULL){
         float num1 = strtof(token, NULL);
         token = strtok(NULL, " ");
@@ -167,6 +170,7 @@ Don't trust the OS virtual memory allocation ;)
 static inline AF_Mesh AF_Mesh_Load_Data(FILE* _file, AF_Mesh _mesh){
     int verticesCount = 0;//_mesh.vertexCount;
     int indicesCount = 0;//_mesh.indexCount;
+    int texCoordsCount = 0; 
     char fileBuffer[1024] ; // Buffer for reading the file
 
     // Create a new AF_Struct, that holds the pointers to the heap allocated verticies and indices data
@@ -215,7 +219,17 @@ static inline AF_Mesh AF_Mesh_Load_Data(FILE* _file, AF_Mesh _mesh){
             }
             if(fileBuffer[0] == 'v' && fileBuffer[1] == 't'){
                 // texture coordinate
-                continue;
+		AF_Vec2 texPos = AF_Mesh_GetVec2FromString(fileBuffer);
+		//vertex.texCoord = texPos;
+		// don't overwrite the verts when add the tex coords
+		// TODO: fix this
+		AF_Vertex tempVertex = returnMesh.vertices[texCoordsCount];
+		
+		AF_Vertex newVertex = {{tempVertex.position.x,tempVertex.position.y,tempVertex.position.z},{tempVertex.normal.x,tempVertex.normal.y,tempVertex.normal.z},texPos};
+                returnMesh.vertices[texCoordsCount] = newVertex;
+		texCoordsCount ++;
+
+		continue;
             }
             if(fileBuffer[0] == 'v' && fileBuffer[1] == 'n'){
                 // normal
@@ -245,7 +259,7 @@ static inline AF_Mesh AF_Mesh_Load_OBJ(const char* _filePath){
     // Actually load the data into the mesh
     returnMesh = AF_Mesh_Load_Data(file, tempMesh);
 
-    /*
+   /* 
     AF_Log("Loading Model: \n");
     for(int i = 0; i < returnMesh.vertexCount; i++){
         AF_Vertex vertex = returnMesh.vertices[i];

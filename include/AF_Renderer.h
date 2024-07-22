@@ -119,6 +119,9 @@ void AF_LIB_DestroyRenderer(AF_MeshData* _meshList);
 
 
 // Textures
+
+unsigned int AF_Renderer_LoadTexture(char const * path);
+void AF_Renderer_SetTexture(const unsigned int _shaderID, const char* _shaderVarName, int _textureID);
 //static unsigned int LoadTexture(char const * path);
 //static void SetDiffuseTexture(const unsigned int _shaderID);
 //static void SetSpecularTexture(const unsigned int _shaderID);

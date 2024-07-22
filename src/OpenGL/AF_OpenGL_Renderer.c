@@ -13,6 +13,8 @@ This implementation is for OpenGL
 #include "AF_Mat4.h"
 #include <GL/glew.h>
 #define GL_SILENCE_DEPRECATION
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 // string to use in logging
 const char* openglRendererFileTitle = "AF_OpenGL_Renderer:";
@@ -65,7 +67,6 @@ AF_Log_Mat4
 Take a AF_Mat 4 and log it to the console.
 ====================
 */
-
 void AF_Log_Mat4(AF_Mat4 _mat4){
 	AF_Log("	Row 1: %f %f %f %f\n\
 		Row 2: %f %f %f %f\n\
@@ -92,6 +93,55 @@ void AF_Log_Mat4(AF_Mat4 _mat4){
 		_mat4.rows[3].w);
 }
 
+// utility function for loading a 2D texture from file
+// ---------------------------------------------------
+unsigned int AF_Renderer_LoadTexture(char const * path)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrComponents;
+    unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum format = GL_RGB;
+        if (nrComponents == 1){
+            format = GL_RED;
+        }
+        else if (nrComponents == 3)
+        {
+            format = GL_RGB;
+        }
+        else if (nrComponents == 4){
+            format = GL_RGBA;
+        }
+            
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+    }
+    else
+    {
+	AF_Log_Error("Texture failed to load at path %s\n",path);
+        stbi_image_free(data);
+    }
+
+    return textureID;
+}
+
+void AF_Renderer_SetTexture(const unsigned int _shaderID, const char* _shaderVarName, int _textureID){
+    glUseProgram(_shaderID); // Bind the shader program
+    glUniform1i(glGetUniformLocation(_shaderID, _shaderVarName), _textureID); // Tell the shader to set the "Diffuse_Texture" variable to use texture id 0
+    glUseProgram(0);
+}
 
 /*
 ====================
@@ -120,13 +170,13 @@ int AF_LIB_InitRenderer(AF_Window* _window){
 
     //Initialize OpenGL
     
-     //Initialize clear color
+    //Initialize clear color
     glClearColor(1.0f, 1.0f, 1.0f, 1.f );
     
     /**/
 
     //set the glViewport and the perspective
-    glViewport(_window->windowXPos, _window->windowYPos, _window->windowWidth, _window->windowHeight);
+    //glViewport(_window->windowXPos, _window->windowYPos, _window->windowWidth, _window->windowHeight);
 
         // configure global opengl state
     // -----------------------------
@@ -182,9 +232,6 @@ void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList){
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indexCount * sizeof(unsigned int), &_meshList->meshes[0].indices[0], GL_STATIC_DRAW);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-
-
-    
     //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     // Stride is 8 floats wide, 3*pos, 3*normal, 2*tex
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(AF_Vertex), (void*)0);
@@ -269,7 +316,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
     //glCullFace(GL_BACK);  // Cull back faces
     //glDisable(GL_CULL_FACE);
 
-    glUseProgram(_meshList->shaderID); 
+    glUseProgram(_meshList->materials[0].shaderID); 
     AF_CheckGLError( "Error at useProgram Rendering OpenGL! \n");
     
     for(uint32_t i = 0; i < _meshList->numMeshes; i++){
@@ -278,11 +325,11 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         
         // Send camrea data to shader
         // Projection Matrix
-	GLint projLocation = glGetUniformLocation(_meshList->shaderID, "projection");
+	GLint projLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "projection");
 	glUniformMatrix4fv(projLocation, 1, GL_FALSE, (float*)&_camera->projectionMatrix.rows[0]);
 
 	// View Matrix
-	GLint viewLocation = glGetUniformLocation(_meshList->shaderID, "view");
+	GLint viewLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "view");
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, (float*)&_camera->viewMatrix.rows[0]);
 	
 	// TODO: put into forloop to upate shader with all model transforms
@@ -303,12 +350,29 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 	}};
 	
 	// Set model matrix Mat4 for shader
-	GLint modelLocation = glGetUniformLocation(_meshList->shaderID, "model");
+	GLint modelLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "model");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, (float*)&modelMatrix.rows[0]);
 	
         // bind diffuse map
         //glActiveTexture(GL_TEXTURE0);
         //glBindTexture(GL_TEXTURE_2D, diffuseMap);
+
+	//--------------Bind Texture data----------------------
+	//TODO: load diffuse texture to a piece of memory
+        //bind diffuse texture
+        //if(_mesh.material.diffuseTexture > 0){
+	       //bind the diffuse texture
+	       //// bind diffuse map
+	int uniformLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "image");
+	//AF_Log("UniformLocation: %i\n",uniformLocation);
+	glUniform1i(uniformLocation,0);// _meshList->materials[0].textureID); 
+	glActiveTexture(GL_TEXTURE0);
+	// TODO implement binding the actual texture
+	//unsigned int diffuseTexture = _mesh.material.diffuseTexture;
+	glBindTexture(GL_TEXTURE_2D, _meshList->materials[0].textureID);
+	AF_CheckGLError("Error blBindTexture diffuse ");
+       // }
+
 
         
         //glDrawElements(GL_TRIANGLES, _meshList->meshes[i].indexCount, GL_UNSIGNED_INT, 0
@@ -336,6 +400,12 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         
         glBindVertexArray(0);
         AF_CheckGLError( "Error bindvertexarray(0) Rendering OpenGL! \n");
+	
+	// Unbind textures
+    	//unbind diffuse
+    	glActiveTexture(GL_TEXTURE0);
+    	glBindTexture(GL_TEXTURE_2D, 0);
+
     }
     AF_CheckGLError( "Error at end Rendering OpenGL! \n");
 }
@@ -354,7 +424,8 @@ void AF_LIB_DestroyRenderer(AF_MeshData* _meshList){
     glDeleteVertexArrays(1, &_meshList->vao);
     glDeleteBuffers(1, &_meshList->vbo);
     glDeleteBuffers(1, &_meshList->ibo);
-    glDeleteProgram(_meshList->shaderID);
+    glDeleteProgram(_meshList->materials[0].shaderID);
+    //glDeleteTexture(_meshList->materials[0].textureID);
     AF_CheckGLError( "Error Destroying Renderer OpenGL! \n");
 }
 
