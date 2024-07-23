@@ -101,6 +101,8 @@ unsigned int AF_Renderer_LoadTexture(char const * path)
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
+    stbi_set_flip_vertically_on_load(true);  
+
     unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
     if (data)
     {
@@ -123,10 +125,15 @@ unsigned int AF_Renderer_LoadTexture(char const * path)
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Use these filters for normal textures
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	
+	// Use these filters for pixel art sprites.
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        stbi_image_free(data);
+	stbi_image_free(data);
     }
     else
     {
@@ -181,6 +188,8 @@ int AF_LIB_InitRenderer(AF_Window* _window){
         // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     AF_CheckGLError( "Error initializing OpenGL! \n");
     //AF_CheckGLError("SLDGameRenderer::Initialise:: finishing up init: ");
     return success;
@@ -272,7 +281,11 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
     AF_CheckGLError( "Error at start of Rendering OpenGL! \n");
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //printf("OpenGL Display\n");
+
+    // Enable transparent blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     _window->title = _window->title;
     _camera->transform->pos = _camera->transform->pos;
     _camera->windowWidth = _window->windowWidth;
