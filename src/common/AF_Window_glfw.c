@@ -76,11 +76,11 @@ Move window callback
 ====================
 */
 void window_pos_callback(GLFWwindow* _window, int _xpos, int _ypos){
+    if(_xpos || _ypos){}
     // if the window is moved, update the glviewport
     int width, height;
-    glfwGetWindowSize(_window, &width, &height);
-    //if(_xpos || _ypos){}
-    glViewport(_xpos, _ypos, width, height);
+    glfwGetFramebufferSize((GLFWwindow*)_window, &width, &height);
+    glViewport(0, 0, width, height);
 }
 
 /*
@@ -91,10 +91,25 @@ when the framebuffer size changes, update the glViewport
 */
 void framebuffer_size_callback(GLFWwindow* _window, int _width, int _height)
 {
-    if(_window){}
-    glViewport(0, 0, _width, _height);
+    if(_width || _height){}
+    int width, height;
+    glfwGetFramebufferSize((GLFWwindow*)_window, &width, &height);
+    glViewport(0, 0, width, height);
 }
 
+/*
+====================
+window_size_callback
+when the window  size changes, update the glViewport
+====================
+*/
+void window_size_callback(GLFWwindow* _window, int _width, int _height)
+{
+    if(_width || _height){}
+    int width, height;
+    glfwGetFramebufferSize((GLFWwindow*)_window, &width, &height);
+    glViewport(0, 0, width, height);
+}
 
 
 /*
@@ -132,7 +147,15 @@ void AF_Lib_CreateWindow(AF_Window* _window) {
          AF_Log_Error("%s CreateWindow: Failed to create a window\n", glfwWindowFileTitle);
     }
     // assign the glfw window ptr to the struct passed in
-     _window->window = glfwWindow;
+    _window->window = glfwWindow;
+
+    // Set the framebuffer sies
+    int width, height;
+    glfwGetFramebufferSize(glfwWindow, &width, &height);
+    glViewport(0, 0, width, height);
+
+     _window->frameBufferWidth = width; 
+     _window->frameBufferHeight = height;
 
     // make current context
     glfwMakeContextCurrent(glfwWindow);
@@ -140,6 +163,8 @@ void AF_Lib_CreateWindow(AF_Window* _window) {
     // Set the struct pointer as the user pointer of the window for input callback
     glfwSetWindowUserPointer(glfwWindow, _window->input);
 
+    // Set window size callback 
+    glfwSetWindowSizeCallback(glfwWindow, window_size_callback);
 
     // Set callback
     glfwSetKeyCallback(glfwWindow, key_callback);
@@ -152,19 +177,6 @@ void AF_Lib_CreateWindow(AF_Window* _window) {
 
 }
 
-/*
-====================
-AF_Window_Refresh
-Refresh the window by updating the viewport size
-====================
-*/
-
-void AF_Window_Refresh(AF_Window* _window){
-    // When on osx retina displays we often need to use the framebuffer to actually set the gl viewport size.
-    int width, height;
-    glfwGetFramebufferSize((GLFWwindow*)_window->window, &width, &height);
-    glViewport(0, 0, width, height);
-}
 
 /*
 ====================
@@ -179,6 +191,15 @@ BOOL AF_Lib_UpdateWindow(AF_Window* _window){
         // Close the window
         return FALSE;
     }
+
+    // Set the framebuffer sies
+    int width, height;
+    glfwGetFramebufferSize((GLFWwindow*)_window->window, &width, &height);
+    glViewport(0, 0, width, height);
+
+     _window->frameBufferWidth = width; 
+     _window->frameBufferHeight = height;
+
     
     /* Render here */
 

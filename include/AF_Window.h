@@ -16,6 +16,8 @@ typedef struct {
     uint16_t windowYPos;	// Window Y position
     uint16_t windowWidth;   // Width of the window
     uint16_t windowHeight;  // Height of the window
+    uint16_t frameBufferWidth; // Width of the framebuffer
+    uint16_t frameBufferHeight; // Height of the framebuffer
 } AF_Window;
 
 /// @brief Creates a window with the specified parameters
@@ -31,7 +33,6 @@ BOOL AF_Lib_UpdateWindow(AF_Window* _window);
 /// @param _window  pointer to the window struct containing the window object and other window data
 void AF_Lib_TerminateWindow(AF_Window* _window);
 
-void AF_Window_Refresh(AF_Window* _window);
 
 #ifdef __cplusplus
 }

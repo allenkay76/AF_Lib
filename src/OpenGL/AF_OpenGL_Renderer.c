@@ -318,8 +318,9 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 
     _window->title = _window->title;
     _camera->transform->pos = _camera->transform->pos;
-    _camera->windowWidth = _window->windowWidth;
-    _camera->windowHeight = _window->windowHeight;
+    // Get the width and height from the frambuffer instead of the original set window size as open gl works in pixels
+    _camera->windowWidth = _window->frameBufferWidth;//_window->windowWidth;
+    _camera->windowHeight = _window->frameBufferHeight;//_window->windowHeight;
 
 
     // update the game camera with the window width
@@ -341,7 +342,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 
     // Calculate projection matrix
     //if(_camera->orthographic == TRUE){
-    	_camera->projectionMatrix = AF_Camera_GetOrthographicProjectionMatrix(_window, _camera);
+    _camera->projectionMatrix = AF_Camera_GetOrthographicProjectionMatrix(_window, _camera);
     //}else{
 	//AF_Log("OpenGL_Renderer: NO Projection Matrix setup \n");
     //}

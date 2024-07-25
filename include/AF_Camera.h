@@ -71,20 +71,22 @@ inline static AF_Mat4 AF_Camera_GetOrthographicProjectionMatrix(AF_Window* _wind
 	|    0      0        0                      1             |
      */
 	// TODO: fix this
-    _camera->windowWidth = _window->windowWidth;
-    _camera->windowHeight = _window->windowHeight;
-     _camera->fov = 45.0f;
+    // Get the framebuffer width and height as we work in pixels
+    _camera->windowWidth = _window->frameBufferWidth;//_window->windowWidth;
+    _camera->windowHeight = _window->frameBufferHeight;//_window->windowHeight;
+    _camera->fov = 45.0f;
     _camera->nearPlane = 0.01f;
     _camera->farPlane = 100.0f;
     _camera->aspectRatio =  _camera->windowWidth / _camera->windowHeight;
     _camera->tanHalfFov = tan(_camera->fov * 0.5f);
     _camera->rangeInv = 1.0f / (_camera->farPlane - _camera->nearPlane);
 
-
-    float right = 5.0f;       //_camera->windowWidth; 
-    float left = 0.0f;
-    float top = 5.0f;        //_camera->windowHeight;
-    float bottom = 0.0f;    //0.0f;
+    float orthoWidth = 10.0f;
+    float orthoHeight = orthoWidth / _camera->aspectRatio;
+    float right = orthoWidth / 2;//5.0f;       //_camera->windowWidth; 
+    float left = -orthoWidth / 2;//0.0f;
+    float top = orthoHeight / 2;//5.0f;        //_camera->windowHeight;
+    float bottom = -orthoHeight / 2;//0.0f;    //0.0f;
 
     // Set the elements of the projection matrix
     AF_Mat4 orth_projectionMatrix;
