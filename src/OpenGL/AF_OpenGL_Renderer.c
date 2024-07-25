@@ -311,6 +311,8 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
     // Enable transparent blending
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // if in 2d mode, disable depth testing
+    glDisable(GL_DEPTH_TEST);
 
     _window->title = _window->title;
     _camera->transform->pos = _camera->transform->pos;
