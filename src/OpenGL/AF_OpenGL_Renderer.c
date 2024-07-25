@@ -283,15 +283,16 @@ void AF_Renderer_DisplaySprite(AF_MeshData* _meshList, AF_Sprite* _spritesList, 
 	// Get the shader variable locations
 	GLint spriteSizeLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteSize");
 	GLint spriteFrameLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteFrame");
-
-	if(_frame){}
 	// Set the frame
-	GLfloat spriteFrame[2] = {_frame, 1.0f};
-	glUniform2fv(spriteFrameLocation, 1, spriteFrame);
-
+	
 	// For each sprite mesh, update the sprite sheet position by the frame
 	for(uint32_t i = 0; i < _meshList->numMeshes; i++){
 		glUniform1i(spriteSizeLocation, _spritesList[i].size.x);
+
+		// update the sprite Pos
+		GLfloat spriteFrame[2] = {_frame, _spritesList[i].pos.y};
+		glUniform2fv(spriteFrameLocation, 1, spriteFrame);
+
 	}
  	AF_CheckGLError( "Error at end of Rendering sprite OpenGL! \n");
 }

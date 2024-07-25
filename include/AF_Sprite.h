@@ -14,6 +14,7 @@ AF_SPRITE_SHEET
 typedef struct {
 	AF_Vec2 pos;
 	AF_Vec2 size;
+	int animationFrames;
 	
 } AF_Sprite;
 
