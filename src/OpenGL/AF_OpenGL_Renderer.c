@@ -278,6 +278,7 @@ Display the sprites renderer
 ====================
 */
 void AF_Renderer_DisplaySprite(AF_MeshData* _meshList, AF_Sprite* _spritesList, int _frame){
+	if(_frame){}
  	AF_CheckGLError( "Error at start of Rendering sprite OpenGL! \n");
 	glUseProgram(_meshList->materials[0].shaderID); 
 	// Get the shader variable locations
@@ -290,7 +291,7 @@ void AF_Renderer_DisplaySprite(AF_MeshData* _meshList, AF_Sprite* _spritesList, 
 		glUniform1i(spriteSizeLocation, _spritesList[i].size.x);
 
 		// update the sprite Pos
-		GLfloat spriteFrame[2] = {_frame, _spritesList[i].pos.y};
+		GLfloat spriteFrame[2] = {_spritesList[i].currentFrame, _spritesList[i].pos.y};
 		glUniform2fv(spriteFrameLocation, 1, spriteFrame);
 
 	}
