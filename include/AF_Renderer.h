@@ -4,6 +4,7 @@
 #include "AF_Camera.h"
 #include "AF_MeshData.h"
 #include "AF_CTransform3D.h"
+#include "AF_Sprite.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,7 +77,7 @@ void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList);
 
 
 // Draw
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms );
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms);
  
 //void DrawFrame(GLFWwindow* _window, Entity& _cameraEntity, std::vector<Entity*>& _entities);
 //static void RenderMesh(const AF_Mesh& _mesh, const AF_Camera& _camera);
@@ -129,6 +130,7 @@ void AF_Renderer_SetTexture(const unsigned int _shaderID, const char* _shaderVar
 //static void SetEmissionMaskTexture(const unsigned int _shaderID);
 
 
+void AF_Renderer_DisplaySprite(AF_MeshData* _meshList, AF_Sprite* _spritesList, int _frame);
 
 #ifdef __cplusplus
 }

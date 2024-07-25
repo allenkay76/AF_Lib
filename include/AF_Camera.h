@@ -3,6 +3,7 @@
 #include "AF_Math.h"
 #include "AF_CTransform3D.h"
 #include "AF_Mat4.h"
+#include "AF_Window.h"
 
 #include <math.h> // Include math for std::tan
 #include "AF_Lib_Define.h"
@@ -30,10 +31,11 @@ typedef struct  {
     BOOL orthographic;
     AF_Mat4 projectionMatrix;
     AF_Mat4 viewMatrix;
+    AF_Vec4 backgroundColor;
 } AF_CCamera;
 
 
-inline static AF_Mat4 AF_Camera_GetOrthographicProjectionMatrix(AF_CCamera* _camera){
+inline static AF_Mat4 AF_Camera_GetOrthographicProjectionMatrix(AF_Window* _window, AF_CCamera* _camera){
 
    
        
@@ -68,12 +70,13 @@ inline static AF_Mat4 AF_Camera_GetOrthographicProjectionMatrix(AF_CCamera* _cam
 	|    0      0   2/(zFar-zNear)  (zNear+zFar)/(zNear-zFar) |
 	|    0      0        0                      1             |
      */
-
-
+	// TODO: fix this
+    _camera->windowWidth = _window->windowWidth;
+    _camera->windowHeight = _window->windowHeight;
      _camera->fov = 45.0f;
     _camera->nearPlane = 0.01f;
     _camera->farPlane = 100.0f;
-    _camera->aspectRatio = _camera->windowWidth / _camera->windowHeight;
+    _camera->aspectRatio =  _camera->windowWidth / _camera->windowHeight;
     _camera->tanHalfFov = tan(_camera->fov * 0.5f);
     _camera->rangeInv = 1.0f / (_camera->farPlane - _camera->nearPlane);
 

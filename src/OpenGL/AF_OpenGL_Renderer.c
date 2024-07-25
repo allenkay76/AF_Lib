@@ -178,7 +178,7 @@ int AF_LIB_InitRenderer(AF_Window* _window){
     //Initialize OpenGL
     
     //Initialize clear color
-    glClearColor(1.0f, 1.0f, 1.0f, 1.f );
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f );
     
     /**/
 
@@ -273,13 +273,39 @@ void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList){
 
 /*
 ====================
+AF_Renderer_DisplaySprite
+Display the sprites renderer
+====================
+*/
+void AF_Renderer_DisplaySprite(AF_MeshData* _meshList, AF_Sprite* _spritesList, int _frame){
+ 	AF_CheckGLError( "Error at start of Rendering sprite OpenGL! \n");
+	glUseProgram(_meshList->materials[0].shaderID); 
+	// Get the shader variable locations
+	GLint spriteSizeLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteSize");
+	GLint spriteFrameLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteFrame");
+
+	if(_frame){}
+	// Set the frame
+	GLfloat spriteFrame[2] = {_frame, 1.0f};
+	glUniform2fv(spriteFrameLocation, 1, spriteFrame);
+
+	// For each sprite mesh, update the sprite sheet position by the frame
+	for(uint32_t i = 0; i < _meshList->numMeshes; i++){
+		glUniform1i(spriteSizeLocation, _spritesList[i].size.x);
+	}
+ 	AF_CheckGLError( "Error at end of Rendering sprite OpenGL! \n");
+}
+
+
+/*
+====================
 AF_LIB_DisplayRenderer
 Display the renderer
 ====================
 */
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms ){
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms){
     AF_CheckGLError( "Error at start of Rendering OpenGL! \n");
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(_camera->backgroundColor.x, _camera->backgroundColor.y, _camera->backgroundColor.z, _camera->backgroundColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Enable transparent blending
@@ -311,7 +337,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 
     // Calculate projection matrix
     //if(_camera->orthographic == TRUE){
-    	_camera->projectionMatrix = AF_Camera_GetOrthographicProjectionMatrix(_camera);
+    	_camera->projectionMatrix = AF_Camera_GetOrthographicProjectionMatrix(_window, _camera);
     //}else{
 	//AF_Log("OpenGL_Renderer: NO Projection Matrix setup \n");
     //}
@@ -366,6 +392,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 	GLint modelLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "model");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, (float*)&modelMatrix.rows[0]);
 	
+		
         // bind diffuse map
         //glActiveTexture(GL_TEXTURE0);
         //glBindTexture(GL_TEXTURE_2D, diffuseMap);
@@ -387,7 +414,17 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
        // }
 
 
-        
+        //GLint spriteSizeLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteSize");
+	//GLint spriteFrameLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteFrame");
+
+	
+	// Set the frame
+	//GLfloat spriteFrame[2] = {1.0f, 1.0f};
+	//glUniform2fv(spriteFrameLocation, 1, spriteFrame);
+
+	// For each sprite mesh, update the sprite sheet position by the frame
+	//glUniform1i(spriteSizeLocation, 4);
+
         //glDrawElements(GL_TRIANGLES, _meshList->meshes[i].indexCount, GL_UNSIGNED_INT, 0
 
         // calculate the model matrix for each object and pass it to shader before drawing
