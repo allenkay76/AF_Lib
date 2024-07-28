@@ -271,32 +271,7 @@ void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList){
     AF_CheckGLError( "Error InitMesh Buffers for OpenGL! \n");
 }
 
-/*
-====================
-AF_Renderer_DisplaySprite
-Display the sprites renderer
-====================
-*/
-void AF_Renderer_DisplaySprite(AF_MeshData* _meshList, AF_Sprite* _spritesList, int _frame){
-	if(_frame){}
- 	AF_CheckGLError( "Error at start of Rendering sprite OpenGL! \n");
-	glUseProgram(_meshList->materials[0].shaderID); 
-	// Get the shader variable locations
-	GLint spriteSizeLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteSize");
-	GLint spriteFrameLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteFrame");
-	// Set the frame
-	
-	// For each sprite mesh, update the sprite sheet position by the frame
-	for(uint32_t i = 0; i < _meshList->numMeshes; i++){
-		glUniform1i(spriteSizeLocation, _spritesList[i].size.x);
 
-		// update the sprite Pos
-		GLfloat spriteFrame[2] = {_spritesList[i].currentFrame, _spritesList[i].pos.y};
-		glUniform2fv(spriteFrameLocation, 1, spriteFrame);
-
-	}
- 	AF_CheckGLError( "Error at end of Rendering sprite OpenGL! \n");
-}
 
 
 /*
@@ -305,7 +280,7 @@ AF_LIB_DisplayRenderer
 Display the renderer
 ====================
 */
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms){
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms,  AF_Sprite* _spritesList){
     AF_CheckGLError( "Error at start of Rendering OpenGL! \n");
     glClearColor(_camera->backgroundColor.x, _camera->backgroundColor.y, _camera->backgroundColor.z, _camera->backgroundColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -362,20 +337,30 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 
     glUseProgram(_meshList->materials[0].shaderID); 
     AF_CheckGLError( "Error at useProgram Rendering OpenGL! \n");
+    GLint textureUniformLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "image");
+    GLint projLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "projection");
+    GLint viewLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "view");
+    GLint modelLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "model");
+    
+    // TODO: this is sprite specific, so fix this.
+    // Get the shader variable locations
+    GLint spriteSizeLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteSize");
+    GLint spriteFrameLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteFrame");
+       
+
+    // Send camrea data to shader
+    // Projection Matrix
+    glUniformMatrix4fv(projLocation, 1, GL_FALSE, (float*)&_camera->projectionMatrix.rows[0]);
+
+    // View Matrix
+    glUniformMatrix4fv(viewLocation, 1, GL_FALSE, (float*)&_camera->viewMatrix.rows[0]);
+	
+
     
     for(uint32_t i = 0; i < _meshList->numMeshes; i++){
         // Draw mesh
         //AF_Log("AF_OpenGL_Renderer:\nRendering mesh %i: %i verts, %i indices\n", i, _meshList->meshes[i].vertexCount,_meshList->meshes[i].indexCount);
         
-        // Send camrea data to shader
-        // Projection Matrix
-	GLint projLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "projection");
-	glUniformMatrix4fv(projLocation, 1, GL_FALSE, (float*)&_camera->projectionMatrix.rows[0]);
-
-	// View Matrix
-	GLint viewLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "view");
-	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, (float*)&_camera->viewMatrix.rows[0]);
-	
 	// TODO: put into forloop to upate shader with all model transforms
 	
 	// world transformation
@@ -394,53 +379,28 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 	}};
 	
 	// Set model matrix Mat4 for shader
-	GLint modelLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "model");
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, (float*)&modelMatrix.rows[0]);
 	
-		
-        // bind diffuse map
-        //glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_2D, diffuseMap);
+	
+	// Tell the shader about the sprite position
+        if (spriteSizeLocation != -1) {
+	    GLfloat spriteSize[2] = {_spritesList[i].size.x, _spritesList[i].size.y};
+            glUniform2fv(spriteSizeLocation, 1, spriteSize);
+        }
 
-	//--------------Bind Texture data----------------------
-	//TODO: load diffuse texture to a piece of memory
-        //bind diffuse texture
-        //if(_mesh.material.diffuseTexture > 0){
-	       //bind the diffuse texture
-	       //// bind diffuse map
-	int uniformLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "image");
-	//AF_Log("UniformLocation: %i\n",uniformLocation);
-	glUniform1i(uniformLocation,0);// _meshList->materials[0].textureID); 
+        // Update the sprite position
+        if (spriteFrameLocation != -1) {
+            GLfloat spriteFrame[2] = {_spritesList[i].currentFrame, _spritesList[i].pos.y};
+            glUniform2fv(spriteFrameLocation, 1, spriteFrame);
+        }
+	
+	// Set the texture for the shader
+	glUniform1i(textureUniformLocation,0);// _meshList->materials[0].textureID); 
 	glActiveTexture(GL_TEXTURE0);
 	// TODO implement binding the actual texture
 	//unsigned int diffuseTexture = _mesh.material.diffuseTexture;
-	glBindTexture(GL_TEXTURE_2D, _meshList->materials[0].textureID);
+	glBindTexture(GL_TEXTURE_2D, _meshList->materials[i].textureID);
 	AF_CheckGLError("Error blBindTexture diffuse ");
-       // }
-
-
-        //GLint spriteSizeLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteSize");
-	//GLint spriteFrameLocation = glGetUniformLocation(_meshList->materials[0].shaderID, "spriteFrame");
-
-	
-	// Set the frame
-	//GLfloat spriteFrame[2] = {1.0f, 1.0f};
-	//glUniform2fv(spriteFrameLocation, 1, spriteFrame);
-
-	// For each sprite mesh, update the sprite sheet position by the frame
-	//glUniform1i(spriteSizeLocation, 4);
-
-        //glDrawElements(GL_TRIANGLES, _meshList->meshes[i].indexCount, GL_UNSIGNED_INT, 0
-
-        // calculate the model matrix for each object and pass it to shader before drawing
-        //glm::mat4 model = glm::mat4(1.0f);
-	 
-	
-		//model = glm::translate(model, cubePositions[i]);
-        //float angle = 20.0f * i;
-        //model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
         
         
@@ -449,9 +409,9 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
         AF_CheckGLError( "Error bind vao Rendering OpenGL! \n");
         //---------------Send command to Graphics API to Draw Triangles------------
         
-        glDrawElements(GL_TRIANGLES, (unsigned int)_meshList->meshes[0].indexCount, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, (unsigned int)_meshList->meshes[i].indexCount, GL_UNSIGNED_INT, 0);
         
-       AF_CheckGLError( "Error drawElements Rendering OpenGL! \n");
+        AF_CheckGLError( "Error drawElements Rendering OpenGL! \n");
         
         glBindVertexArray(0);
         AF_CheckGLError( "Error bindvertexarray(0) Rendering OpenGL! \n");
@@ -479,8 +439,10 @@ void AF_LIB_DestroyRenderer(AF_MeshData* _meshList){
     glDeleteVertexArrays(1, &_meshList->vao);
     glDeleteBuffers(1, &_meshList->vbo);
     glDeleteBuffers(1, &_meshList->ibo);
-    glDeleteProgram(_meshList->materials[0].shaderID);
-    //glDeleteTexture(_meshList->materials[0].textureID);
+    for(uint32_t i = 0; i < _meshList->numMeshes; i++){
+	glDeleteProgram(_meshList->materials[i].shaderID);
+    }
+        //glDeleteTexture(_meshList->materials[0].textureID);
     AF_CheckGLError( "Error Destroying Renderer OpenGL! \n");
 }
 

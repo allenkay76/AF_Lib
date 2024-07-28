@@ -12,6 +12,7 @@ typedef struct {
     AF_Mesh* meshes;
     AF_Material* materials;
     uint32_t numMeshes;
+    uint32_t materialsSize;
     uint32_t vao;
     uint32_t vbo;
     uint32_t ibo;
