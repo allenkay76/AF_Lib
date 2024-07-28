@@ -40,6 +40,14 @@ unsigned int indices[] = {  // note that we start from 0!
     1, 2, 3   // second Triangle
 };
 
+// OpenGL errors
+const char* invalidEnum = "INVALID_ENUM";
+const char* invalidValue = "INVALID_VALUE";
+const char* invalidOperation = "INVALID_OPERATION";
+const char* stackOverflow = "STACK_OVERFLOW";
+const char* stackUnderflow = "STACK_UNDERFLOW";
+const char* outOfMemory = "OUT_OF_MEMORY";
+const char* invalidFrameBufferOperation = "INVALID_FRAMEBUFFER_OPERATION";
 
 
 
@@ -50,15 +58,26 @@ Helper function for checking for GL errors
 ====================
 */
 void AF_CheckGLError(const char* _message){    
-    GLenum error = GL_NO_ERROR;
-    error = glGetError();
-    if (error != GL_NO_ERROR) {
-       
-        // write
-        AF_Log_Error(_message);
-        printf("\nGL Error: %i\n", error);
+    GLenum errorCode = GL_NO_ERROR;
+    errorCode = glGetError();
+    const char* errorMessage = "";
+    if(errorMessage){}
+    while ((errorCode = glGetError()) != GL_NO_ERROR)
+    {
+	switch (errorCode)
+        {
+            case GL_INVALID_ENUM:                  errorMessage  = invalidEnum; break;
+            case GL_INVALID_VALUE:                 errorMessage  = invalidValue; break;
+            case GL_INVALID_OPERATION:             errorMessage  = invalidOperation; break;
+            case GL_STACK_OVERFLOW:                errorMessage  = stackOverflow; break;
+            case GL_STACK_UNDERFLOW:               errorMessage  = stackUnderflow; break;
+            case GL_OUT_OF_MEMORY:                 errorMessage  = outOfMemory; break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION: errorMessage  = invalidFrameBufferOperation; break;
+        }
+    AF_Log_Error(_message,errorMessage);
 
     }
+           //printf("\nGL Error: %i\n", error);
 }
 
 /*
