@@ -439,9 +439,8 @@ void AF_LIB_DestroyRenderer(AF_MeshData* _meshList){
     glDeleteVertexArrays(1, &_meshList->vao);
     glDeleteBuffers(1, &_meshList->vbo);
     glDeleteBuffers(1, &_meshList->ibo);
-    for(uint32_t i = 0; i < _meshList->numMeshes; i++){
-	glDeleteProgram(_meshList->materials[i].shaderID);
-    }
+    glDeleteProgram(_meshList->materials[0].shaderID);
+    
         //glDeleteTexture(_meshList->materials[0].textureID);
     AF_CheckGLError( "Error Destroying Renderer OpenGL! \n");
 }
