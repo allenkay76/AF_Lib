@@ -392,66 +392,17 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData
 	AF_Vec4 modelRot = {_meshTransforms[i].rot.x, _meshTransforms[i].rot.y, _meshTransforms[i].rot.z, 1.0f};
 	AF_Vec4 modelScale = {_meshTransforms[i].scale.x, _meshTransforms[i].scale.y, _meshTransforms[i].scale.z, 1.0f};
 
-	// Create the model matrix in row oder format combining the postion and scale
 	
-	// Apply rotation
-	// x axis matrix
-	float cosX = cos(modelRot.x);
-	float sinX = sin(modelRot.x);
-	AF_Mat4 xAxisMatrix = {{
-		{1.0f, 0.0f, 0.0f, 0.0f},
-		{0.0f, cosX, -sinX, 0.0f},
-    		{0.0f, sinX, cosX, 0.0f},
-		{0.0f, 0.0f, 0.0f, 1.0f}			// Row order position
-	}};
-
-	// y axis matrix 
-	float cosY = cos(modelRot.y);
-	float sinY = sin(modelRot.y);
-	AF_Mat4 yAxisMatrix = {{
-		{cosY, 0.0f, sinY, 0.0f},
-		{0.0f, 1.0f, 0.0f, 0.0f},
-    		{-sinY, 0.0f, cosY, 0.0f},
-		{0.0f, 0.0f, 0.0f, 1.0f}			// Row order position
-	}};
-
-	// z axis matrix 
-	float cosZ = cos(modelRot.z);
-	float sinZ = sin(modelRot.z);
-	AF_Mat4 zAxisMatrix = {{
-		{cosZ, -sinZ, 0.0f, 0.0f},
-		{sinZ, cosZ, 0.0f, 0.0f},
-    		{0.0f, 0.0f, 1.0f, 0.0f},
-		{0.0f, 0.0f, 0.0f, 1.0f}			// Row order position
-	}};
-
-	AF_Mat4 rotatedMatrix = AFM4_DOT_M4(AFM4_DOT_M4(zAxisMatrix, yAxisMatrix), xAxisMatrix);
-
-
+	// apply rotation to postion and scaled matrix
+	AF_Mat4 rotatedMatrix = AFM4_ROTATE_V4(AFM4_IDENTITY(), modelRot);//AFM4_DOT_M4( rotatedMatrix, scaleMatrix);
+									  
 	// Apply scale
-	AF_Mat4 scaleMatrix = {{
-		{modelScale.x, 0.0f, 0.0f, 0.0f},
-		{0.0f, modelScale.y, 0.0f, 0.0f},
-    		{0.0f, 0.0f, modelScale.z, 0.0f},
-		{0.0f, 0.0f, 0.0f, 1.0f}			// Row order position
-	}};
+	AF_Mat4 scaleMatrix = AFM4_SCALE_V4(AFM4_IDENTITY(), modelScale); 
 
 	// apply rotation to postion and scaled matrix
-	AF_Mat4 rsMat = AFM4_DOT_M4( rotatedMatrix, scaleMatrix);
-		//scaleMatrix, rotatedMatrix);
-
-	/*	
-	AF_Mat4 modelMatrix = {{
-		rsMat.rows[0],
-		rsMat.rows[1],
-    		rsMat.rows[2],
-		modelPos
-	}};*/
-
+	AF_Mat4 rsMat = AFM4_DOT_M4(rotatedMatrix, scaleMatrix);
 	
-	// Construct the final model matrix with translation
 	// Construct the final model matrix with translation using row-major order
-	
 	AF_Mat4 modelMatrix = {{
 	    {rsMat.rows[0].x, rsMat.rows[0].y, rsMat.rows[0].z, modelPos.x},
 	    {rsMat.rows[1].x, rsMat.rows[1].y, rsMat.rows[1].z, modelPos.y},
