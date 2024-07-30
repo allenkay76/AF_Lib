@@ -1,7 +1,7 @@
-#ifndef AF_CAMERA_H
-#define AF_CAMERA_H
+#ifndef AF_CCAMERA_H
+#define AF_CCAMERA_H
 #include "AF_Math.h"
-#include "AF_CTransform3D.h"
+#include "ECS/Components/AF_CTransform3D.h"
 #include "AF_Mat4.h"
 #include "AF_Window.h"
 
@@ -34,7 +34,29 @@ typedef struct  {
     AF_Vec4 backgroundColor;
 } AF_CCamera;
 
+inline static AF_CCamera AF_CCamera_ZERO(void){
+	AF_CCamera returnCamera = {
+		.transform = 0,
+		.cameraFront = AFV3_ZERO(),
+		.cameraUp = AFV3_ZERO(),
+		.cameraRight = AFV3_ZERO(),
+		.cameraWorldUp = AFV3_ZERO(),
+		.yaw = 0.0f,
+		.pitch = 0.0f,
+		.nearPlane = 0.0f,
+		.aspectRatio = 0.0f,
+		.windowWidth = 0.0f,
+		.windowHeight = 0.0f,
+		.tanHalfFov = 0.0f,
+		.rangeInv = 0.0f,
+		.orthographic = false,
+		.projectionMatrix = AFM4_IDENTITY(),
+		.viewMatrix = AFM4_IDENTITY(),
+		.backgroundColor = AFV4_ZERO()
+	};
 
+	return returnCamera;
+}
 inline static AF_Mat4 AF_Camera_GetOrthographicProjectionMatrix(AF_Window* _window, AF_CCamera* _camera){
 
    
@@ -132,4 +154,4 @@ static inline AF_Vec3 AF_Camera_CalculateFront(float _yaw, float _pitch){
 }
 #endif
 
-#endif //AF_CAMERA_H
+#endif //AF_CCAMERA_H

@@ -15,6 +15,17 @@ typedef struct {
     AF_Vec3 scale;// = {1.0f, 1.0f, 1.0f};
 } AF_CTransform3D;
 
+static inline AF_CTransform3D AF_CTransform3D_ZERO(void){
+	AF_CTransform3D returnTransform = {
+        .has = FALSE,
+        .enabled = FALSE,
+        .pos = {0.0f, 0.0f, 0.0f},
+        .rot = {0.0f, 0.0f, 0.0f},
+        .scale = {1.0f, 1.0f, 1.0f}
+	// Default position matrix
+    };
+	return returnTransform;
+}
 
 #ifdef __cplusplus
 }

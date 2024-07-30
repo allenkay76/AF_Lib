@@ -1,10 +1,10 @@
 #ifndef AF_RENDERER_H
 #define AF_RENDERER_H
 #include "AF_Window.h"
-#include "AF_Camera.h"
+#include "ECS/Components/AF_CCamera.h"
 #include "AF_MeshData.h"
-#include "AF_CTransform3D.h"
-#include "AF_Sprite.h"
+#include "ECS/Components/AF_CTransform3D.h"
+#include "ECS/Components/AF_CSprite.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,7 +77,7 @@ void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList);
 
 
 // Draw
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms,  AF_Sprite* _spritesList);
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms,  AF_CSprite* _spritesList);
  
 //void DrawFrame(GLFWwindow* _window, Entity& _cameraEntity, std::vector<Entity*>& _entities);
 //static void RenderMesh(const AF_Mesh& _mesh, const AF_Camera& _camera);
