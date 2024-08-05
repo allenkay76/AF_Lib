@@ -13,6 +13,8 @@ extern "C" {
 #endif
 
 typedef struct  {
+    BOOL has;
+    BOOL enabled;
     AF_CTransform3D* transform;
     AF_Vec3 cameraFront;
     AF_Vec3 cameraUp;
@@ -43,6 +45,7 @@ inline static AF_CCamera AF_CCamera_ZERO(void){
 		.cameraWorldUp = AFV3_ZERO(),
 		.yaw = 0.0f,
 		.pitch = 0.0f,
+		.fov = 0.0f,
 		.nearPlane = 0.0f,
 		.aspectRatio = 0.0f,
 		.windowWidth = 0.0f,
@@ -57,6 +60,34 @@ inline static AF_CCamera AF_CCamera_ZERO(void){
 
 	return returnCamera;
 }
+
+inline static AF_CCamera AF_CCamera_ORTHOGRAPHIC(void){
+	AF_CCamera returnCamera = {
+		.transform = 0,
+		.cameraFront = {0.0f, 0.0f, 1.0f},
+		.cameraUp = {0.0f, 1.0f, 0.0f},
+		.cameraRight =  {0.0f, 0.0f, 0.0f},
+		.cameraWorldUp = {0.0f, 1.0f, 0.0f},
+		.yaw = 0.0f,
+		.pitch = 0.0f,
+		.fov = 45.0f,
+		.nearPlane = 0.01f,
+		.farPlane = 100.0f,
+		.aspectRatio = 0.0f,
+		.windowWidth = 0.0f,
+		.windowHeight = 0.0f,
+		.tanHalfFov = tan(45.0f * 0.5f), //tan(halfFov)
+		.rangeInv = 1.0f / 100.0f - 0.01f, // 1/farPlane - nearPlane
+		.orthographic = false,
+		.projectionMatrix = AFM4_IDENTITY(),
+		.viewMatrix = AFM4_IDENTITY(),
+		.backgroundColor = AFV4_ZERO()
+	};
+
+	return returnCamera;
+}
+	
+
 inline static AF_Mat4 AF_Camera_GetOrthographicProjectionMatrix(AF_Window* _window, AF_CCamera* _camera){
 
    

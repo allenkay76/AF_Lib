@@ -3,6 +3,7 @@
 #include "AF_Window.h"
 #include "ECS/Components/AF_CCamera.h"
 #include "AF_MeshData.h"
+#include "ECS/Entities/AF_ECS.h"
 #include "ECS/Components/AF_CTransform3D.h"
 #include "ECS/Components/AF_CSprite.h"
 
@@ -15,7 +16,7 @@ void CheckGLError(const char * _message);
 // Init
 int AF_LIB_InitRenderer(AF_Window* _window);
 
-void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList);
+void AF_LIB_InitMeshBuffers(AF_Entity* _entities, uint32_t _entityCount);
 
 //void Init(GLFWwindow* _window, std::vector<Entity*>& _entities);
 //void InitRenderingData(std::vector<Entity*>& _entities);
@@ -77,14 +78,14 @@ void AF_LIB_InitMeshBuffers(AF_MeshData* _meshList);
 
 
 // Draw
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_MeshData* _meshList, AF_CTransform3D* _meshTransforms,  AF_CSprite* _spritesList);
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_ECS* _ecs);
  
 //void DrawFrame(GLFWwindow* _window, Entity& _cameraEntity, std::vector<Entity*>& _entities);
 //static void RenderMesh(const AF_Mesh& _mesh, const AF_Camera& _camera);
 
 
 // Destroy
-void AF_LIB_DestroyRenderer(AF_MeshData* _meshList);
+void AF_LIB_DestroyRenderer(AF_ECS* _ecs);
 // Cleanup
 //static void CleanUpMesh(const unsigned int _shaderID);
 //void CloseWindow();

@@ -15,11 +15,13 @@ The entity struct and helper functions
 #include "ECS/Components/AF_CCamera.h"
 
 typedef struct {
-    BOOL active;
-    uint32_t id;
-    AF_CTransform3D transform;
-    AF_CSprite sprite;
-    AF_CCamera camera;
+    BOOL alive;			// Entity has been created
+    BOOL enabled;		// Entity has ben enabled
+    uint32_t id;		// id of the entity
+    AF_CTransform3D transform;	// 3d transform component
+    AF_CSprite sprite;		// sprite cmponent
+    AF_CCamera camera;		// camera component
+    AF_Mesh mesh;		// mesh component
 } AF_Entity;
 
 #endif //AF_Entity_H

@@ -16,6 +16,7 @@ functions to load meshes, creating memory on the heap based on the size of the m
 #include <string.h>
 #include "AF_Util.h"
 #include "AF_Log.h"
+#include "AF_Material.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,12 +26,41 @@ extern "C" {
 
 // Mesh Struct
 typedef struct {
+    BOOL has;
+    BOOL enabled;
     AF_Vertex* vertices;
     int vertexCount;
     unsigned int* indices;
     int indexCount;
-    
+    uint32_t vao;
+    uint32_t vbo;
+    uint32_t ibo;
+    AF_Material material;
 } AF_Mesh;
+
+/*
+====================
+AF_Mesh_ZERO
+Function used to create an empty mesh component
+====================
+*/
+static inline AF_Mesh AF_Mesh_ZERO(void){
+    AF_Mesh returnMesh = {
+	.has = false,
+	.enabled = false,
+	.vertices = NULL,
+	.vertexCount = 0,
+	.indices = NULL,
+	.indexCount = 0,
+	.vao = 0,
+	.vbo = 0,
+	.ibo = 0,
+	.material = {0,0}
+    };
+    return returnMesh;
+}
+
+
 
 /*
 ====================
@@ -97,7 +127,7 @@ DOES NOT load the actual verticies or indices or create new memory on the heap.
 ====================
 */
 static inline AF_Mesh AF_Mesh_GetOBJAttribSize(FILE* _file){
-    AF_Mesh mesh = {NULL, 0, NULL, 0};
+    AF_Mesh mesh = AF_Mesh_ZERO();
     if(_file == NULL){
         AF_Log_Error("%s Failed to open file to GetOBJAttribSize %s\n", AF_MESH_FILE_TITLE);
         return mesh;
@@ -175,10 +205,16 @@ static inline AF_Mesh AF_Mesh_Load_Data(FILE* _file, AF_Mesh _mesh){
 
     // Create a new AF_Struct, that holds the pointers to the heap allocated verticies and indices data
     AF_Mesh returnMesh = {
+	    		0,
+			0,
                         (AF_Vertex*)malloc(sizeof(AF_Vertex) * _mesh.vertexCount), 
                         _mesh.vertexCount,
                         (unsigned int*)malloc(sizeof(int) * _mesh.indexCount),
-                        _mesh.indexCount
+                        _mesh.indexCount,
+			0,
+			0,
+			0,
+			{0,0}
                         };
     
 
@@ -244,7 +280,7 @@ static inline AF_Mesh AF_Mesh_Load_Data(FILE* _file, AF_Mesh _mesh){
 
 static inline AF_Mesh AF_Mesh_Load_OBJ(const char* _filePath){
   
-    AF_Mesh returnMesh = {NULL, 0, NULL, 0};
+    AF_Mesh returnMesh = AF_Mesh_ZERO();
     // open the file
     FILE *file = fopen(_filePath, "r"); // Open the file for reading
     
