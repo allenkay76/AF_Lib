@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define AF_INPUT_KEYS_MAPPED 4
+#define AF_INPUT_KEYS_MAPPED 5
 
 typedef struct {
 	int code;

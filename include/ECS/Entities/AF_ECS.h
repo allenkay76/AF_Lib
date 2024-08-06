@@ -28,6 +28,7 @@ static inline void AF_ECS_Init(AF_ECS* _ecs){
 		entity->transform = AF_CTransform3D_ZERO();
 		entity->sprite = AF_CSprite_ZERO();
 		entity->camera = AF_CCamera_ZERO();
+		entity->rigidbody = AF_CRigidbody_ZERO();
 	}
 	_ecs->entitiesCount = AF_ECS_TOTAL_ENTITIES;
 }
@@ -49,38 +50,6 @@ static inline AF_Entity* AF_ECS_CreateEntity(AF_ECS* _ecs){
     return entity;
 }
 
-static inline AF_CCamera* AF_ECS_AddCamera_Component(AF_Entity* _entity){
-	if(_entity == NULL){
-		AF_Log_Error("AF_ECS_AddCameraComponent:: Recieved a null Entity\n");
-		return NULL;
-	}
-	AF_CCamera* component = &_entity->camera;
-	component->has = true;
-	component->enabled = true;
-	return component;
-}
-
-static inline AF_CTransform3D* AF_ECS_AddTransform3D_Component(AF_Entity* _entity){
-	if(_entity == NULL){
-		AF_Log_Error("AF_ECS_AddTransform3DComponent:: Recieved a null Entity\n");
-		return NULL;
-	}
-	AF_CTransform3D* component = &_entity->transform;
-	component->has = true;
-	component->enabled = true;
-	return component;
-}
-
-static inline AF_CSprite* AF_ECS_AddSprite_Component(AF_Entity* _entity){
-	if(_entity == NULL){
-		AF_Log_Error("AF_ECS_AddSprite:: Recieved a null Entity\n");
-		return NULL;
-	}
-	AF_CSprite* component = &_entity->sprite;
-	component->has = true;
-	component->enabled = true;
-	return component;
-}
 
 
 //void AF_RemoveEntity(Entity* _entity);

@@ -46,7 +46,7 @@ enable the component and set some values to default values.
 ====================
 */
 static inline AF_CCollider AF_CCollider_ADD(void){
-	AF_CRigidbody rigidbody = {
+	AF_CCollider rigidbody = {
 		.has = true,
 		.enabled = true,
 		.bounds = {
@@ -56,7 +56,7 @@ static inline AF_CCollider AF_CCollider_ADD(void){
 			0	// height
 		}
 	};
-	return rigidbody
+	return rigidbody;
 }
 
 

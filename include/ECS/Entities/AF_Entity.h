@@ -13,6 +13,7 @@ The entity struct and helper functions
 #include "ECS/Components/AF_CTransform3D.h"
 #include "ECS/Components/AF_CSprite.h"
 #include "ECS/Components/AF_CCamera.h"
+#include "ECS/Components/AF_CRigidbody.h"
 
 typedef struct {
     BOOL alive;			// Entity has been created
@@ -22,6 +23,7 @@ typedef struct {
     AF_CSprite sprite;		// sprite cmponent
     AF_CCamera camera;		// camera component
     AF_Mesh mesh;		// mesh component
+    AF_CRigidbody rigidbody;		// rigidbody component
 } AF_Entity;
 
 #endif //AF_Entity_H

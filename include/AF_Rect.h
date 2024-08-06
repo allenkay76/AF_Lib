@@ -11,9 +11,9 @@ AF_Rect
 Simple rect data strcuture
 ====================
 */
-struct AF_Rect {
+typedef struct {
     float x, y, w, h;
-};
+} AF_Rect;
 #ifdef __cplusplus
 }
 #endif
