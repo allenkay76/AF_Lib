@@ -303,9 +303,11 @@ AF_LIB_DisplayRenderer
 Display the renderer
 ====================
 */
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_ECS* _ecs){
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_Entity* _cameraEntity, AF_ECS* _ecs){
 
     AF_CheckGLError( "Error at start of Rendering OpenGL! \n");
+    AF_CTransform3D* cameraTransform = &_cameraEntity->transform;
+    AF_CCamera* _camera = &_cameraEntity->camera;
     glClearColor(_camera->backgroundColor.x, _camera->backgroundColor.y, _camera->backgroundColor.z, _camera->backgroundColor.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -316,7 +318,6 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_ECS* _ec
     glDisable(GL_DEPTH_TEST);
 
     _window->title = _window->title;
-    _camera->transform->pos = _camera->transform->pos;
     // Get the width and height from the frambuffer instead of the original set window size as open gl works in pixels
     _camera->windowWidth = _window->frameBufferWidth;//_window->windowWidth;
     _camera->windowHeight = _window->frameBufferHeight;//_window->windowHeight;
@@ -335,7 +336,7 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_CCamera* _camera, AF_ECS* _ec
     AF_Vec3 up = AFV3_NORMALIZE(AFV3_CROSS(right, front));
 	
     // Calculate view matrix:vs
-    AF_Mat4 viewMatrix = AF_Math_Lookat(_camera->transform->pos, AFV3_ADD(_camera->transform->pos,front), up);
+    AF_Mat4 viewMatrix = AF_Math_Lookat(cameraTransform->pos, AFV3_ADD(cameraTransform->pos,front), up);
     _camera->viewMatrix = viewMatrix;
 
     // Calculate projection matrix

@@ -4,7 +4,6 @@
 #include "ECS/Components/AF_CTransform3D.h"
 #include "AF_Mat4.h"
 #include "AF_Window.h"
-
 #include <math.h> // Include math for std::tan
 #include "AF_Lib_Define.h"
 
@@ -15,7 +14,6 @@ extern "C" {
 typedef struct  {
     BOOL has;
     BOOL enabled;
-    AF_CTransform3D* transform;
     AF_Vec3 cameraFront;
     AF_Vec3 cameraUp;
     AF_Vec3 cameraRight;
@@ -38,7 +36,6 @@ typedef struct  {
 
 inline static AF_CCamera AF_CCamera_ZERO(void){
 	AF_CCamera returnCamera = {
-		.transform = 0,
 		.cameraFront = AFV3_ZERO(),
 		.cameraUp = AFV3_ZERO(),
 		.cameraRight = AFV3_ZERO(),
@@ -61,9 +58,8 @@ inline static AF_CCamera AF_CCamera_ZERO(void){
 	return returnCamera;
 }
 
-inline static AF_CCamera AF_CCamera_ORTHOGRAPHIC(void){
+inline static AF_CCamera AF_CCamera_ADD(BOOL _isOrthographic){
 	AF_CCamera returnCamera = {
-		.transform = 0,
 		.cameraFront = {0.0f, 0.0f, 1.0f},
 		.cameraUp = {0.0f, 1.0f, 0.0f},
 		.cameraRight =  {0.0f, 0.0f, 0.0f},
@@ -78,12 +74,11 @@ inline static AF_CCamera AF_CCamera_ORTHOGRAPHIC(void){
 		.windowHeight = 0.0f,
 		.tanHalfFov = tan(45.0f * 0.5f), //tan(halfFov)
 		.rangeInv = 1.0f / 100.0f - 0.01f, // 1/farPlane - nearPlane
-		.orthographic = false,
+		.orthographic = _isOrthographic,
 		.projectionMatrix = AFM4_IDENTITY(),
 		.viewMatrix = AFM4_IDENTITY(),
 		.backgroundColor = AFV4_ZERO()
 	};
-
 	return returnCamera;
 }
 	

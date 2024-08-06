@@ -7,6 +7,12 @@
 extern "C" {
 #endif
 
+/*
+====================
+AF_CTransform3D
+basic struct for the transform component
+====================
+*/
 typedef struct {
     BOOL has;// = FALSE;
     BOOL enabled;// = FALSE;
@@ -15,10 +21,34 @@ typedef struct {
     AF_Vec3 scale;// = {1.0f, 1.0f, 1.0f};
 } AF_CTransform3D;
 
+/*
+====================
+AF_CTransform3D_ZERO
+Empty constructor
+====================
+*/
 static inline AF_CTransform3D AF_CTransform3D_ZERO(void){
 	AF_CTransform3D returnTransform = {
         .has = FALSE,
         .enabled = FALSE,
+        .pos = {0.0f, 0.0f, 0.0f},
+        .rot = {0.0f, 0.0f, 0.0f},
+        .scale = {1.0f, 1.0f, 1.0f}
+	// Default position matrix
+    };
+	return returnTransform;
+}
+
+/*
+====================
+AF_CTransform3D_ADD
+Add component constructor for the component
+====================
+*/
+static inline AF_CTransform3D AF_CTransform3D_ADD(void){
+	AF_CTransform3D returnTransform = {
+        .has = TRUE,
+        .enabled = TRUE,
         .pos = {0.0f, 0.0f, 0.0f},
         .rot = {0.0f, 0.0f, 0.0f},
         .scale = {1.0f, 1.0f, 1.0f}

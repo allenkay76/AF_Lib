@@ -60,6 +60,27 @@ static inline AF_Mesh AF_Mesh_ZERO(void){
     return returnMesh;
 }
 
+/*
+====================
+AF_Mesh_ADD
+Function used to Add the component
+====================
+*/
+static inline AF_Mesh AF_Mesh_ADD(void){
+    AF_Mesh returnMesh = {
+	.has = true,
+	.enabled = true,
+	.vertices = NULL,
+	.vertexCount = 0,
+	.indices = NULL,
+	.indexCount = 0,
+	.vao = 0,
+	.vbo = 0,
+	.ibo = 0,
+	.material = {0,0}
+    };
+    return returnMesh;
+}
 
 
 /*
@@ -323,6 +344,8 @@ static inline AF_Mesh AF_Mesh_Load_OBJ(const char* _filePath){
     //AF_Log("Mesh Indices %d\n", mesh.indexCount);
     
     // Return a copy of the AF_Mesh struct. It will contain pointers to the heap allocated memory
+    returnMesh.has = true;
+    returnMesh.enabled = true;
     return returnMesh;
 }
 

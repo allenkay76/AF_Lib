@@ -44,6 +44,8 @@ static inline AF_Entity* AF_ECS_CreateEntity(AF_ECS* _ecs){
     AF_Entity* entity = &_ecs->entities[_ecs->currentEntity];
     entity->alive = true;
     entity->enabled = true;
+    // Give this entity a default transform component that is enabled
+    entity->transform = AF_CTransform3D_ADD();
     return entity;
 }
 
