@@ -303,7 +303,7 @@ AF_LIB_DisplayRenderer
 Display the renderer
 ====================
 */
-void AF_LIB_DisplayRenderer(AF_Window* _window, AF_Entity* _cameraEntity, AF_ECS* _ecs){
+void AF_LIB_DisplayRenderer(AF_Window* _window, AF_Entity* _cameraEntity, AF_ECS* _ecs, int shaderID){
 
     AF_CheckGLError( "Error at start of Rendering OpenGL! \n");
     AF_CTransform3D* cameraTransform = &_cameraEntity->transform;
@@ -352,8 +352,23 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_Entity* _cameraEntity, AF_ECS
     //glEnable(GL_CULL_FACE);
     //glCullFace(GL_BACK);  // Cull back faces
     //glDisable(GL_CULL_FACE);
+	// reuse the main shader to set the projection and view as it will be the same for all entities
+	// Start sending data to the shader/ GPU
+	// First entity is normally the camera, so
+	//int shaderID = _ecs->entities[1].mesh.material.shaderID;
+	glUseProgram(shaderID); 
 
-       
+	int projLocation = glGetUniformLocation(shaderID, "projection");
+	int viewLocation = glGetUniformLocation(shaderID, "view");
+
+	// Send camrea data to shader
+	// Projection Matrix
+	glUniformMatrix4fv(projLocation, 1, GL_FALSE, (float*)&_camera->projectionMatrix.rows[0]);
+
+	// View Matrix
+	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, (float*)&_camera->viewMatrix.rows[0]);
+
+ 
 
     for(uint32_t i = 0; i < _ecs->entitiesCount; i++){//_meshList->numMeshes; i++){
 	
@@ -388,27 +403,11 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_Entity* _cameraEntity, AF_ECS
 		continue;
 	}
 
-	// Start sending data to the shader/ GPU
-	int shaderID = mesh->material.shaderID;
-	glUseProgram(shaderID); 
 	AF_CheckGLError( "Error at useProgram Rendering OpenGL! \n");
 	int textureUniformLocation = glGetUniformLocation(shaderID, "image");
-	int projLocation = glGetUniformLocation(shaderID, "projection");
-	int viewLocation = glGetUniformLocation(shaderID, "view");
 	int modelLocation = glGetUniformLocation(shaderID, "model");
     
-	// TODO: this is sprite specific, so fix this.<
-	// Get the shader variable locations
-	int spriteSizeLocation = glGetUniformLocation(shaderID, "spriteSize");
-	int spriteFrameLocation = glGetUniformLocation(shaderID, "spriteFrame");
-
-	// Send camrea data to shader
-	// Projection Matrix
-	glUniformMatrix4fv(projLocation, 1, GL_FALSE, (float*)&_camera->projectionMatrix.rows[0]);
-
-	// View Matrix
-	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, (float*)&_camera->viewMatrix.rows[0]);
-	
+		
 	AF_Vec3* pos = &trans->pos;
 	AF_Vec3* rot = &trans->rot;
 	AF_Vec3* scale = &trans->scale;
@@ -438,11 +437,13 @@ void AF_LIB_DisplayRenderer(AF_Window* _window, AF_Entity* _cameraEntity, AF_ECS
 	// Set model matrix Mat4 for shader
 	glUniformMatrix4fv(modelLocation, 1, GL_TRUE, (float*)&modelMatrix.rows[0]);
 	
-	if(textureUniformLocation || spriteSizeLocation || spriteFrameLocation){}	
 	
 	// if we have a sprite, then render it.
 	AF_CSprite* sprite = &entity->sprite;
 	if(sprite->has == true && sprite->enabled == true){
+
+		int spriteSizeLocation = glGetUniformLocation(shaderID, "spriteSize");
+		int spriteFrameLocation = glGetUniformLocation(shaderID, "spriteFrame");
 
 		// Tell the shader about the sprite position
 		if (spriteSizeLocation != -1) {
