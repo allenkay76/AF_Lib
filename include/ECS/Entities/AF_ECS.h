@@ -9,7 +9,7 @@ Entity Component System used to process entities and manage them
 #define AF_ECS_H
 #include "AF_Entity.h"
 
-#define AF_ECS_TOTAL_ENTITIES 1000
+#define AF_ECS_TOTAL_ENTITIES 2000
 
 
 typedef struct {
